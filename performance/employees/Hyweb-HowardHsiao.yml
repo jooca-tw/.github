@@ -1,0 +1,10 @@
+employee: Howard
+github_login: Hyweb-HowardHsiao
+real_name: 蕭浩良
+email: howard.hsiao@hyweb.com.tw   # TODO: 確認信箱格式
+role: senior-rd-b
+joined: "2023-04-10"
+manager: Hyweb-JayKao
+active: true
+notes: |
+  O 部門 RD 組主管（Team Lead 型）
