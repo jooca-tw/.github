@@ -1,0 +1,10 @@
+employee: Walter
+github_login: Hyweb-WalterLiang
+real_name: 梁閔傑
+email: walter.liang@hyweb.com.tw   # TODO: 確認信箱格式
+role: pm
+joined: "2023-03-15"
+manager: Hyweb-JayKao
+active: true
+notes: |
+  O 部門 PM 組主管
