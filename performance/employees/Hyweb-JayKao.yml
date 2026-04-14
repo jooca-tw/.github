@@ -7,7 +7,7 @@ github_login: Hyweb-JayKao
 real_name: 高嘉宏
 email: jay.kao@hyweb.com.tw
 role: senior-rd-b        # 部門主管，此欄位僅為符合 schema，不實際用於評分
-joined: "2025-05-11"
+joined: "2021-05-11"
 manager:                 # 無 GitHub 帳號，用 manager_name
 manager_name: 賴總經理
 active: true
