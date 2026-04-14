@@ -1,0 +1,37 @@
+name: Validate Employees
+
+on:
+  pull_request:
+    paths:
+      - "performance/employees/**.yml"
+      - "performance/validate.py"
+  push:
+    branches: [main]
+    paths:
+      - "performance/employees/**.yml"
+      - "performance/validate.py"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install deps
+        run: pip install --quiet pyyaml jsonschema
+
+      - name: Run validator
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python performance/validate.py
