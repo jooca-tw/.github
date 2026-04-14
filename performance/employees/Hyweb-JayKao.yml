@@ -1,0 +1,16 @@
+# 範本檔案（2026-04-14 試建）
+# 部門主管 Jay 本身不納入評分系統（見制度文件第 1 節）
+# 此檔純粹作為 schema 格式範本，推到正式 .github repo 前請移除或補齊 [TODO] 欄位
+
+employee: Jay
+github_login: Hyweb-JayKao
+real_name: 高嘉宏
+email: jay.kao@hyweb.com.tw
+role: senior-rd-b        # 部門主管，此欄位僅為符合 schema，不實際用於評分
+joined: "2025-05-11"
+manager:                 # 無 GitHub 帳號，用 manager_name
+manager_name: 賴總經理
+active: true
+notes: |
+  O 部門（數位智能整合事業處）部門主管
+  ⚠️ 依制度文件第 1 節，部門主管不納入本考核系統，此檔僅作為 schema 格式範本
