@@ -6,6 +6,15 @@ role: junior-rd
 joined: '2025-05-26'
 manager: Hyweb-HowardHsiao
 active: true
-notes: 'RD 組組員（Junior）
-
-  '
+projects:
+  - 台北市立圖書館
+  - 台中市立圖書館
+  - 桃園市立圖書館
+  - 新竹市立圖書館
+  - 苗栗縣立圖書館
+  - 台南市立圖書館
+  - 花蓮縣立圖書館
+  - 台東縣立圖書館
+  - 屏東縣立圖書館
+  - 雲林縣立圖書館
+notes: 'RD 組組員（Junior）'
