@@ -43,6 +43,7 @@ SCHEMA: dict = {
         "active":       {"type": "boolean"},
         "left_at":      {"type": "string", "format": "date"},
         "notes":        {"type": "string"},
+        "projects":    {"type": "array", "items": {"type": "string"}},
     },
     "allOf": [
         {"if": {"properties": {"active": {"const": False}}}, "then": {"required": ["left_at"]}},
