@@ -6,6 +6,8 @@ role: pm
 joined: '2026-03-23'
 manager: Hyweb-WalterLiang
 active: true
-notes: 'PM 組組員
-
-  '
+projects:
+  - BBL
+  - Zuba
+  - 全國加油站
+notes: 'PM 組組員'
