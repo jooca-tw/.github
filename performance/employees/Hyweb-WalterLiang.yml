@@ -6,5 +6,9 @@ role: pm
 joined: "2023-03-15"
 manager: Hyweb-JayKao
 active: true
+projects:
+  - 臺灣主權 AI
+  - 移民署行動數位證
+  - 國臺圖維護
 notes: |
   O 部門 PM 組主管
