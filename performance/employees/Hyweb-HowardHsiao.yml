@@ -6,5 +6,9 @@ role: senior-rd-b
 joined: "2023-04-10"
 manager: Hyweb-JayKao
 active: true
+projects:
+  - 打詐 App
+  - 新竹縣圖書館尋書導引
+  - 蓬萊國小智慧閱讀
 notes: |
   O 部門 RD 組主管（Team Lead 型）
