@@ -6,6 +6,7 @@ role: senior-rd-a
 joined: '2025-06-23'
 manager: Hyweb-HowardHsiao
 active: true
-notes: 'RD 組組員（Senior A 技術專研型）
-
-  '
+projects:
+  - BBL
+  - 移民署行動數位證
+notes: 'RD 組組員（Senior A 技術專研型）'
