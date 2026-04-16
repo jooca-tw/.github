@@ -6,6 +6,7 @@ role: pm
 joined: '2025-11-11'
 manager: Hyweb-WalterLiang
 active: true
-notes: 'PM 組組員
-
-  '
+projects:
+  - 輔助全部 PM
+  - Zuba
+notes: 'PM 助理'
