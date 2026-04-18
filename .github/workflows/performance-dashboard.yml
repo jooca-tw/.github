@@ -1,0 +1,45 @@
+name: Performance Dashboard Data
+
+on:
+  # 每天早上 8 點（UTC+8 = UTC 0:00）自動跑
+  schedule:
+    - cron: '0 0 * * *'
+  # 手動觸發
+  workflow_dispatch:
+  # perf label 相關 issue 變動時觸發
+  issues:
+    types: [labeled, unlabeled, closed, reopened]
+
+permissions:
+  contents: write
+  issues: read
+
+jobs:
+  build-data:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install pyyaml
+
+      - name: Generate dashboard data
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python performance/scripts/generate-dashboard-data.py
+
+      - name: Deploy to gh-pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./performance/dashboard-out
+          destination_dir: data
+          keep_files: true
