@@ -3,13 +3,13 @@
     "department_name": "O 部門",
     "period_label": "2026 年 4 月",
     "member_count": 10,
-    "avg_score": 59.5,
+    "avg_score": 60.0,
     "avg_score_delta": "—",
     "completion_rate": "60%",
     "completion_rate_delta": "—",
-    "total_issues": 1,
+    "total_issues": 0,
     "sa_tier_count": 0,
-    "alerts_count": 1,
+    "alerts_count": 0,
     "alerts_delta": "—"
   },
   "members": [
@@ -219,20 +219,18 @@
       "team": "臺灣主權 AI, 移民署行動數位證",
       "subtitle": "專案經理 · Hyweb-WalterLiang",
       "tier": "C",
-      "alert": "orange",
-      "issues": 1,
-      "current_score": 55,
-      "focus_tags": [
-        "時程管理"
-      ],
+      "alert": "ok",
+      "issues": 0,
+      "current_score": 60,
+      "focus_tags": [],
       "trend": {
         "overall": [
-          55,
-          55,
-          55,
-          55,
-          55,
-          55
+          60,
+          60,
+          60,
+          60,
+          60,
+          60
         ],
         "months": [
           "11月",
@@ -270,155 +268,148 @@
         ],
         "series": {
           "程式碼品質": [
-            55,
-            55,
-            55,
-            55,
-            55,
-            55
+            60,
+            60,
+            60,
+            60,
+            60,
+            60
           ],
           "時程管理": [
-            55,
-            55,
-            55,
-            55,
-            55,
-            55
+            60,
+            60,
+            60,
+            60,
+            60,
+            60
           ],
           "團隊協作": [
-            55,
-            55,
-            55,
-            55,
-            55,
-            55
+            60,
+            60,
+            60,
+            60,
+            60,
+            60
           ],
           "技術成長": [
-            55,
-            55,
-            55,
-            55,
-            55,
-            55
+            60,
+            60,
+            60,
+            60,
+            60,
+            60
           ],
           "問題解決": [
-            55,
-            55,
-            55,
-            55,
-            55,
-            55
+            60,
+            60,
+            60,
+            60,
+            60,
+            60
           ],
           "客戶滿意度": [
-            55,
-            55,
-            55,
-            55,
-            55,
-            55
+            60,
+            60,
+            60,
+            60,
+            60,
+            60
           ]
         }
       },
       "kpis": [
         {
           "name": "程式碼品質",
-          "score": 55,
-          "prev": 55,
+          "score": 60,
+          "prev": 60,
           "delta": 0,
-          "status": "未達標",
+          "status": "已完成",
           "trend": [
-            55,
-            55,
-            55,
-            55,
-            55,
-            55
+            60,
+            60,
+            60,
+            60,
+            60,
+            60
           ]
         },
         {
           "name": "時程管理",
-          "score": 55,
-          "prev": 55,
+          "score": 60,
+          "prev": 60,
           "delta": 0,
-          "status": "未達標",
+          "status": "已完成",
           "trend": [
-            55,
-            55,
-            55,
-            55,
-            55,
-            55
+            60,
+            60,
+            60,
+            60,
+            60,
+            60
           ]
         },
         {
           "name": "團隊協作",
-          "score": 55,
-          "prev": 55,
+          "score": 60,
+          "prev": 60,
           "delta": 0,
-          "status": "未達標",
+          "status": "已完成",
           "trend": [
-            55,
-            55,
-            55,
-            55,
-            55,
-            55
+            60,
+            60,
+            60,
+            60,
+            60,
+            60
           ]
         },
         {
           "name": "技術成長",
-          "score": 55,
-          "prev": 55,
+          "score": 60,
+          "prev": 60,
           "delta": 0,
-          "status": "未達標",
+          "status": "已完成",
           "trend": [
-            55,
-            55,
-            55,
-            55,
-            55,
-            55
+            60,
+            60,
+            60,
+            60,
+            60,
+            60
           ]
         },
         {
           "name": "問題解決",
-          "score": 55,
-          "prev": 55,
+          "score": 60,
+          "prev": 60,
           "delta": 0,
-          "status": "未達標",
+          "status": "已完成",
           "trend": [
-            55,
-            55,
-            55,
-            55,
-            55,
-            55
+            60,
+            60,
+            60,
+            60,
+            60,
+            60
           ]
         },
         {
           "name": "客戶滿意度",
-          "score": 55,
-          "prev": 55,
+          "score": 60,
+          "prev": 60,
           "delta": 0,
-          "status": "未達標",
+          "status": "已完成",
           "trend": [
-            55,
-            55,
-            55,
-            55,
-            55,
-            55
+            60,
+            60,
+            60,
+            60,
+            60,
+            60
           ]
         }
       ],
-      "issue_list": [
-        {
-          "id": "#420",
-          "title": "[測試] Dashboard 計分測試",
-          "category": "時程管理",
-          "status": "進行中"
-        }
-      ]
+      "issue_list": []
     },
     {
       "name": "黃俊瑋",
@@ -2013,20 +2004,10 @@
       "issue_list": []
     }
   ],
-  "alerts": [
-    {
-      "name": "梁閔傑",
-      "initials": "閔傑",
-      "tier": "C",
-      "level": "orange",
-      "reason": "扣分事件",
-      "detail": "score 55",
-      "date": "4/18"
-    }
-  ],
+  "alerts": [],
   "alert_summary": {
     "red": 0,
-    "orange": 1,
+    "orange": 0,
     "amber": 0
   }
 }
