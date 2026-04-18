@@ -1,12 +1,9 @@
-name: Performance Dashboard Data
+name: Performance Dashboard
 
 on:
-  # 每天早上 8 點（UTC+8 = UTC 0:00）自動跑
   schedule:
     - cron: '0 0 * * *'
-  # 手動觸發
   workflow_dispatch:
-  # perf label 相關 issue 變動時觸發
   issues:
     types: [labeled, unlabeled, closed, reopened]
 
@@ -15,7 +12,7 @@ permissions:
   issues: read
 
 jobs:
-  build-data:
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -36,10 +33,16 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: python performance/scripts/generate-dashboard-data.py
 
+      - name: Prepare publish directory
+        run: |
+          mkdir -p performance/publish/data
+          cp performance/dashboard-out/data.json performance/publish/data/
+          cp performance/dashboard/*.html performance/publish/
+          cp performance/dashboard/*.css performance/publish/
+          cp performance/dashboard/*.js performance/publish/
+
       - name: Deploy to gh-pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./performance/dashboard-out
-          destination_dir: data
-          keep_files: true
+          publish_dir: ./performance/publish
