@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <title>警示 · 績效考核</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+TC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="logo">
+      <svg width="22" height="22" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2 .37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+      績效考核
+    </div>
+    <div class="nav-section">Dashboard</div>
+    <a class="nav-item" href="page1.html">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M1.75 1h5.5c.414 0 .75.336.75.75v5.5A.75.75 0 0 1 7.25 8h-5.5A.75.75 0 0 1 1 7.25v-5.5C1 1.336 1.336 1 1.75 1zM2.5 2.5v4h4v-4zM8.75 1h5.5c.414 0 .75.336.75.75v5.5A.75.75 0 0 1 14.25 8h-5.5A.75.75 0 0 1 8 7.25v-5.5A.75.75 0 0 1 8.75 1zm.75 1.5v4h4v-4zM1.75 8h5.5c.414 0 .75.336.75.75v5.5a.75.75 0 0 1-.75.75h-5.5a.75.75 0 0 1-.75-.75v-5.5c0-.414.336-.75.75-.75zM2.5 9.5v4h4v-4zM8.75 8h5.5a.75.75 0 0 1 .75.75v5.5a.75.75 0 0 1-.75.75h-5.5a.75.75 0 0 1-.75-.75v-5.5c0-.414.336-.75.75-.75zm.75 1.5v4h4v-4z"/></svg>
+      部門總覽
+    </a>
+    <a class="nav-item active" href="page3.html">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/></svg>
+      警示
+      <span class="count" data-render="alerts_count">0</span>
+    </a>
+  </aside>
+
+  <main class="main">
+    <section class="page">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">警示</h1>
+          <div class="page-subtitle">需要關注的人員 · 按嚴重度排序</div>
+        </div>
+      </div>
+
+      <div class="alert-banner">
+        <div class="alert-cell red">
+          <div class="header-row">
+            <div class="label-big">🔴 嚴重</div>
+            <div class="value" data-render="alert_summary.red">0</div>
+          </div>
+          <div class="desc">連續未達標 / tier 降至 D</div>
+        </div>
+        <div class="alert-cell orange">
+          <div class="header-row">
+            <div class="label-big">🟠 警告</div>
+            <div class="value" data-render="alert_summary.orange">0</div>
+          </div>
+          <div class="desc">tier 下降 / 逾期 issue</div>
+        </div>
+        <div class="alert-cell amber">
+          <div class="header-row">
+            <div class="label-big">🟡 觀察</div>
+            <div class="value" data-render="alert_summary.amber">0</div>
+          </div>
+          <div class="desc">趨勢下滑 / 完成未達標</div>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <div class="search">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M10.68 11.74a6 6 0 0 1-7.922-8.982 6 6 0 0 1 8.982 7.922l3.04 3.04a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215zM11.5 7a4.499 4.499 0 1 0-8.997 0A4.499 4.499 0 0 0 11.5 7z"/></svg>
+          <input id="alert-search-input" placeholder="搜尋..." autocomplete="off">
+        </div>
+        <div class="filter-pill active" data-alertfilter="all">全部</div>
+        <div class="filter-pill" data-alertfilter="red" data-alert="red">🔴 嚴重</div>
+        <div class="filter-pill" data-alertfilter="orange" data-alert="orange">🟠 警告</div>
+        <div class="filter-pill" data-alertfilter="amber" data-alert="amber">🟡 觀察</div>
+      </div>
+
+      <div id="alert-list"></div>
+    </section>
+  </main>
+</div>
+<script src="app.js" defer></script>
+</body>
+</html>
