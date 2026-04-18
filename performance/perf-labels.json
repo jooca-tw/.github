@@ -1,0 +1,147 @@
+[
+  {
+    "name": "perf:hidden-bug",
+    "color": "DC2626",
+    "description": "隱瞞 Bug：明知有問題卻偷偷上線（-5，RD，O1）",
+    "score": -5,
+    "dimension": "O1",
+    "role": "rd",
+    "auto": false,
+    "type": "deduction"
+  },
+  {
+    "name": "perf:milestone-missed",
+    "color": "DC2626",
+    "description": "Milestone 未達成（-5，PM，O2）",
+    "score": -5,
+    "dimension": "O2",
+    "role": "pm",
+    "auto": true,
+    "type": "deduction"
+  },
+  {
+    "name": "perf:surprise-delay",
+    "color": "DC2626",
+    "description": "驚嚇式延遲：Deadline 前才預警（-5，All，O2/O3）",
+    "score": -5,
+    "dimension": "O2",
+    "role": "all",
+    "auto": true,
+    "type": "deduction"
+  },
+  {
+    "name": "perf:untested-delivery",
+    "color": "DC2626",
+    "description": "未測即送：PR 無 test 變更（-3，RD，O1）",
+    "score": -3,
+    "dimension": "O1",
+    "role": "rd",
+    "auto": true,
+    "type": "deduction"
+  },
+  {
+    "name": "perf:customer-late-reply",
+    "color": "DC2626",
+    "description": "客戶回覆逾時：外部 comment 後 >1h 未回（-2，PM，O3）",
+    "score": -2,
+    "dimension": "O3",
+    "role": "pm",
+    "auto": true,
+    "type": "deduction"
+  },
+  {
+    "name": "perf:scope-creep",
+    "color": "DC2626",
+    "description": "需求異動：milestone 進行中新增 issue（-2，PM，O2）",
+    "score": -2,
+    "dimension": "O2",
+    "role": "pm",
+    "auto": true,
+    "type": "deduction"
+  },
+  {
+    "name": "perf:tech-research",
+    "color": "16A34A",
+    "description": "O4 技術研究：概念驗證 / 決策指引 / 落地變現（+5~20，All，O4）",
+    "score_range": [5, 20],
+    "dimension": "O4",
+    "role": "all",
+    "auto": false,
+    "type": "bonus",
+    "requires_confirm": true
+  },
+  {
+    "name": "perf:ai-app",
+    "color": "16A34A",
+    "description": "O5 AI 應用：個人提效 / 團隊賦能 / 流程變革（+5~20，All，O5）",
+    "score_range": [5, 20],
+    "dimension": "O5",
+    "role": "all",
+    "auto": false,
+    "type": "bonus",
+    "requires_confirm": true
+  },
+  {
+    "name": "perf:crisis-handling",
+    "color": "16A34A",
+    "description": "危機處理：事故 / 地獄模式表現佳（+5~10，All，O1/O2）",
+    "score_range": [5, 10],
+    "dimension": "O1",
+    "role": "all",
+    "auto": false,
+    "type": "bonus",
+    "requires_confirm": true
+  },
+  {
+    "name": "perf:team-backup",
+    "color": "16A34A",
+    "description": "神隊友補位：主動介入同事卡關（+3~5，All，O3）",
+    "score_range": [3, 5],
+    "dimension": "O3",
+    "role": "all",
+    "auto": false,
+    "type": "bonus",
+    "requires_confirm": true
+  },
+  {
+    "name": "perf:tier-jump",
+    "color": "16A34A",
+    "description": "越級挑戰：承接高於職級難度專案（+5~8，PM，O2）",
+    "score_range": [5, 8],
+    "dimension": "O2",
+    "role": "pm",
+    "auto": true,
+    "type": "bonus",
+    "requires_confirm": true
+  },
+  {
+    "name": "perf:tier-1",
+    "color": "2563EB",
+    "description": "專案難度 Tier 1（最簡單）",
+    "type": "meta"
+  },
+  {
+    "name": "perf:tier-2",
+    "color": "2563EB",
+    "description": "專案難度 Tier 2",
+    "type": "meta"
+  },
+  {
+    "name": "perf:tier-3",
+    "color": "2563EB",
+    "description": "專案難度 Tier 3（標準）",
+    "type": "meta"
+  },
+  {
+    "name": "perf:tier-4",
+    "color": "2563EB",
+    "description": "專案難度 Tier 4",
+    "type": "meta"
+  },
+  {
+    "name": "perf:tier-5",
+    "color": "2563EB",
+    "description": "專案難度 Tier 5（最困難）",
+    "type": "meta"
+  }
+]
