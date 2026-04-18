@@ -30,7 +30,7 @@ jobs:
 
       - name: Generate dashboard data
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.PERF_TOKEN }}
         run: python performance/scripts/generate-dashboard-data.py
 
       - name: Prepare publish directory
