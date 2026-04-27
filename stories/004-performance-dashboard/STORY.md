@@ -19,6 +19,13 @@
 - [x] 前端三頁（總覽 / 個人 / 警示） — commits `c0a75ae` `ce8c23d` `15da6ec` + `397690b`（CSS）+ `6620a3e`（JS）
 - [x] 個人頁 issue 超連結 — commit `ad57679`
 - [x] v5.1 Phase 2 三軸 dashboard 重構 — commit `54d1af2`
+- [x] v5.3 dashboard 全面補強（6 項 UI/data 改動，補上 v5.2/v5.3 機制的視覺呈現） — commit `627c5e9`
+  - 軸 2 KPI 補 spec-not-frozen / requirement-change / rework-credit
+  - page1 by_system_type 表格（legacy / new-feature / internal-tooling / general）
+  - page2 KPIs 改用真實 `axis_scores`（基準 60 + 實際加扣分），取代 placeholder
+  - page2 Layer 3 季度評估區（僅 PM 角色，串 `perf:quarterly-review` issue）
+  - stats 拆紅綠燈件數（🔴 N · 🟢 M）
+  - deprecated label 警告 banner（scope-creep / untested-delivery / ai-app）
 
 ## 相關既有功能
 - `performance/scripts/generate-dashboard-data.py`
@@ -27,6 +34,7 @@
 - 讀 `employees/*.yml`（Story 001）+ `perf-labels.json`（Story 002）
 
 ## 相關 commits
+- `627c5e9` perf v5.3 dashboard 全面補強：6 項 UI/data 改動上線
 - `54d1af2` perf v5.1 Phase 2：三軸 dashboard 重構
 - `ad57679` perf-dashboard: 個人頁 issue 列表加超連結
 - `ccfe930` ci: Performance Dashboard 加 push trigger

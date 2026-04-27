@@ -36,3 +36,4 @@
 - 綠旗（bonus）目前都 `requires_confirm: true`，不讓 AI 自動加分，避免被刷
 - Tier label 是 meta，不直接計分，只標記專案難度供主管判斷
 - 後續要加新 label 時務必同步更新 `auto-label.py` 的 prompt 與 dashboard 的計分邏輯
+- v5.3 在 dashboard 側補上對應視覺化（spec-not-frozen / requirement-change / rework-credit / deprecated banner），實作見 Story 004 commit `627c5e9`

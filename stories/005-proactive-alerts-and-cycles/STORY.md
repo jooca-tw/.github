@@ -39,3 +39,4 @@
 - 所有提醒類 workflow 共用同一份 `perf-labels.json` 與 `employees/*.yml`，邏輯與 Story 002/001 強耦合
 - 月報目前是 `commit` 形式入庫；如果未來改成發 issue，要新增對應 workflow output
 - Quarterly review 是季度節奏，預計每三個月觸發一次
+- Dashboard 個人頁（page2）已加 Layer 3 區塊串接 `perf:quarterly-review` issue（僅 PM 角色顯示），實作見 Story 004 commit `627c5e9`
