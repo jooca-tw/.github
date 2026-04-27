@@ -1,0 +1,104 @@
+name: AI Collaboration Description Lint
+
+# 檢查 PR description 是否含「## AI Collaboration」段落（≥ 50 字 + 雙關鍵字）
+# v5.1 過渡期：mode=warn（不 block merge）；確認後改 mode=block
+# 對應 perf:ai-paired 保底達標（月底彙整）
+
+on:
+  workflow_call:
+    inputs:
+      mode:
+        description: 'warn | block'
+        required: false
+        type: string
+        default: 'warn'
+  pull_request:
+    types: [opened, synchronize, edited]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  lint-ai-collab:
+    runs-on: ubuntu-latest
+    if: github.repository != 'jooca-tw/.github'
+    steps:
+      - name: Check PR description for AI Collaboration section
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_REPO: ${{ github.repository }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          MODE: ${{ inputs.mode || 'warn' }}
+        run: |
+          set -e
+          echo "Mode: $MODE"
+
+          if [ -z "$PR_BODY" ]; then
+            echo "::warning::PR description is empty"
+            BODY=""
+          else
+            BODY="$PR_BODY"
+          fi
+
+          # 檢查 1：是否有 ## AI Collaboration 段落（heading 嚴格）
+          if ! echo "$BODY" | grep -qE '^##[[:space:]]+AI[[:space:]]+Collaboration'; then
+            STATUS="missing-section"
+          else
+            # 抽出該段內容（從 ## AI Collaboration 開始到下一個 ## 或 EOF）
+            SECTION=$(echo "$BODY" | awk '/^##[[:space:]]+AI[[:space:]]+Collaboration/{flag=1;next}/^##[[:space:]]/{flag=0}flag' | tr -d '\r')
+            CHARS=$(echo -n "$SECTION" | wc -m | tr -d ' ')
+
+            # 檢查 2：≥ 50 字
+            if [ "$CHARS" -lt 50 ]; then
+              STATUS="too-short:$CHARS"
+            else
+              # 檢查 3：必含「工具」關鍵字（AI 工具名稱）
+              if ! echo "$SECTION" | grep -qiE '(claude|gpt|chatgpt|copilot|cursor|gemini|codex|llm|ai)'; then
+                STATUS="missing-tool-keyword"
+              # 檢查 4：必含「問題」關鍵字（描述用 AI 處理什麼）
+              elif ! echo "$SECTION" | grep -qiE '(問題|解決|處理|實作|產生|debug|修復|分析|生成|設計|寫|改|優化|review|fix|implement|generate|analyze|debug|refactor)'; then
+                STATUS="missing-problem-keyword"
+              else
+                STATUS="ok"
+              fi
+            fi
+          fi
+
+          echo "Status: $STATUS"
+
+          # 組訊息
+          case "$STATUS" in
+            ok)
+              echo "✅ AI Collaboration section is valid"
+              exit 0
+              ;;
+            missing-section)
+              MSG="❌ PR description 缺少 \`## AI Collaboration\` 段落。請描述：使用了什麼 AI 工具 + 處理什麼問題（≥ 50 字）。對應 v5.1 軸1 AI 導入保底達標。"
+              ;;
+            too-short:*)
+              CURR=$(echo "$STATUS" | cut -d: -f2)
+              MSG="⚠️ \`## AI Collaboration\` 段落太短（目前 ${CURR} 字 / 要求 ≥ 50）。請補完：工具 + 問題描述。"
+              ;;
+            missing-tool-keyword)
+              MSG="⚠️ \`## AI Collaboration\` 段落缺少 AI 工具名稱（claude/gpt/copilot/cursor/gemini 等）。"
+              ;;
+            missing-problem-keyword)
+              MSG="⚠️ \`## AI Collaboration\` 段落缺少問題描述關鍵字（解決/實作/debug/optimize 等）。"
+              ;;
+          esac
+
+          # 留 PR comment
+          gh pr comment "$PR_NUMBER" --repo "$PR_REPO" --body "$MSG
+
+> v5.1 過渡期：此檢查為 \`mode=$MODE\`。預計 2026-05-01 起改為 \`block\` 模式（缺項或不合格將 block merge）。
+> 詳見 [評分維度調整提案](https://github.com/Hyweb-JayKao/FLUX/blob/main/Efforts/Areas/O%E9%83%A8%E9%96%80%E7%AE%A1%E7%90%86/performance/2026-04-27%20%E8%A9%95%E5%88%86%E7%B6%AD%E5%BA%A6%E8%AA%BF%E6%95%B4%E6%8F%90%E6%A1%88.md)（內網）" || echo "Failed to post comment, continuing"
+
+          if [ "$MODE" = "block" ]; then
+            echo "::error::AI Collaboration section validation failed: $STATUS"
+            exit 1
+          else
+            echo "::warning::AI Collaboration section validation: $STATUS (warn mode, not blocking)"
+            exit 0
+          fi

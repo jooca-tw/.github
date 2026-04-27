@@ -2,9 +2,9 @@
   {
     "name": "perf:hidden-bug",
     "color": "DC2626",
-    "description": "隱瞞 Bug：明知有問題卻偷偷上線（-5，RD，O1）",
+    "description": "隱瞞 Bug：明知有問題卻偷偷上線（-5，RD，軸3 品質）",
     "score": -5,
-    "dimension": "O1",
+    "axis": "axis3-quality",
     "role": "rd",
     "auto": false,
     "type": "deduction"
@@ -12,39 +12,30 @@
   {
     "name": "perf:milestone-missed",
     "color": "DC2626",
-    "description": "Milestone 未達成（-5，PM，O2）",
-    "score": -5,
-    "dimension": "O2",
-    "role": "pm",
+    "description": "Milestone 未達成（PM -5，RD 連帶 -2，軸2 如期）。RD 免責：scope-creep / PM 中後段改 deadline / 後期 reassign",
+    "score_pm": -5,
+    "score_rd": -2,
+    "axis": "axis2-on-time",
+    "role": "shared-pm-rd",
     "auto": true,
     "type": "deduction"
   },
   {
     "name": "perf:surprise-delay",
     "color": "DC2626",
-    "description": "驚嚇式延遲：Deadline 前才預警（-5，All，O2/O3）",
+    "description": "驚嚇式延遲：Deadline 前才預警（-5，全員，軸2 如期）",
     "score": -5,
-    "dimension": "O2",
+    "axis": "axis2-on-time",
     "role": "all",
-    "auto": true,
-    "type": "deduction"
-  },
-  {
-    "name": "perf:untested-delivery",
-    "color": "DC2626",
-    "description": "未測即送：PR 無 test 變更（-3，RD，O1）",
-    "score": -3,
-    "dimension": "O1",
-    "role": "rd",
     "auto": true,
     "type": "deduction"
   },
   {
     "name": "perf:customer-late-reply",
     "color": "DC2626",
-    "description": "客戶回覆逾時：外部 comment 後 >1h 未回（-2，PM，O3）",
+    "description": "客戶回覆逾時：外部 comment 後 >1h 未回（-2，PM，軸2 如期）",
     "score": -2,
-    "dimension": "O3",
+    "axis": "axis2-on-time",
     "role": "pm",
     "auto": true,
     "type": "deduction"
@@ -52,30 +43,61 @@
   {
     "name": "perf:scope-creep",
     "color": "DC2626",
-    "description": "需求異動：milestone 進行中新增 issue（-2，PM，O2）",
+    "description": "需求異動：milestone 進行中新增 issue（-2，PM，軸2 如期）",
     "score": -2,
-    "dimension": "O2",
+    "axis": "axis2-on-time",
     "role": "pm",
     "auto": true,
     "type": "deduction"
   },
   {
-    "name": "perf:tech-research",
+    "name": "perf:quality-rollback",
+    "color": "DC2626",
+    "description": "🆕 結案後 30 天內 reopen（-3，RD 原 closer，軸3 品質）。免責：scope-change / intentional-rollback。可申訴轉移歸責",
+    "score": -3,
+    "axis": "axis3-quality",
+    "role": "rd",
+    "auto": true,
+    "type": "deduction"
+  },
+  {
+    "name": "perf:customer-bug",
+    "color": "DC2626",
+    "description": "🆕 客戶端發現的 Bug（-3，RD，軸3 品質）。觸發：customer-reported label 或客戶 GitHub 帳號留言。免責：not-a-bug / spec-mismatch",
+    "score": -3,
+    "axis": "axis3-quality",
+    "role": "rd",
+    "auto": true,
+    "type": "deduction"
+  },
+  {
+    "name": "perf:review-lag",
+    "color": "DC2626",
+    "description": "🆕 PR ≥ 48h 未 review（-1/件，月度上限 -5，reviewer，軸2 如期）",
+    "score": -1,
+    "monthly_cap": -5,
+    "axis": "axis2-on-time",
+    "role": "all",
+    "auto": true,
+    "type": "deduction"
+  },
+  {
+    "name": "perf:ai-contribution",
     "color": "16A34A",
-    "description": "O4 技術研究：概念驗證 / 決策指引 / 落地變現（+5~20，All，O4）",
-    "score_range": [5, 20],
-    "dimension": "O4",
+    "description": "🆕 AI 流程貢獻：產出共用 skill/template/agent/內訓（+5~10，All，軸1 AI 導入）",
+    "score_range": [5, 10],
+    "axis": "axis1-ai-adoption",
     "role": "all",
     "auto": false,
     "type": "bonus",
     "requires_confirm": true
   },
   {
-    "name": "perf:ai-app",
+    "name": "perf:tech-research",
     "color": "16A34A",
-    "description": "O5 AI 應用：個人提效 / 團隊賦能 / 流程變革（+5~20，All，O5）",
+    "description": "技術研究：概念驗證 / 決策指引 / 落地變現（+5~20，All）",
     "score_range": [5, 20],
-    "dimension": "O5",
+    "axis": "general",
     "role": "all",
     "auto": false,
     "type": "bonus",
@@ -84,9 +106,9 @@
   {
     "name": "perf:crisis-handling",
     "color": "16A34A",
-    "description": "危機處理：事故 / 地獄模式表現佳（+5~10，All，O1/O2）",
+    "description": "危機處理：事故 / 地獄模式表現佳（+5~10，All）",
     "score_range": [5, 10],
-    "dimension": "O1",
+    "axis": "general",
     "role": "all",
     "auto": false,
     "type": "bonus",
@@ -95,9 +117,9 @@
   {
     "name": "perf:team-backup",
     "color": "16A34A",
-    "description": "神隊友補位：主動介入同事卡關（+3~5，All，O3）",
+    "description": "神隊友補位：主動介入同事卡關（+3~5，All）",
     "score_range": [3, 5],
-    "dimension": "O3",
+    "axis": "general",
     "role": "all",
     "auto": false,
     "type": "bonus",
@@ -106,13 +128,53 @@
   {
     "name": "perf:tier-jump",
     "color": "16A34A",
-    "description": "越級挑戰：承接高於職級難度專案（+5~8，PM，O2）",
+    "description": "越級挑戰：承接高於職級難度專案（+5~8）",
     "score_range": [5, 8],
-    "dimension": "O2",
-    "role": "pm",
+    "axis": "general",
+    "role": "all",
     "auto": true,
     "type": "bonus",
     "requires_confirm": true
+  },
+  {
+    "name": "perf:ai-zero",
+    "color": "F59E0B",
+    "description": "🆕 警示：當月個人 PR 無 AI Collaboration 段落達標（不扣分，列月報，軸1 AI 導入）",
+    "score": 0,
+    "axis": "axis1-ai-adoption",
+    "role": "all",
+    "auto": true,
+    "type": "warning"
+  },
+  {
+    "name": "perf:intentional-rollback",
+    "color": "8B5CF6",
+    "description": "🆕 標記用：負責任退版（24h 內加，豁免 quality-rollback 扣分）",
+    "type": "meta"
+  },
+  {
+    "name": "perf:scope-change",
+    "color": "8B5CF6",
+    "description": "🆕 標記用：reopen 因需求變更（豁免 quality-rollback）",
+    "type": "meta"
+  },
+  {
+    "name": "perf:customer-reported",
+    "color": "8B5CF6",
+    "description": "🆕 標記用：客戶反映的 issue（觸發 customer-bug 判定）",
+    "type": "meta"
+  },
+  {
+    "name": "perf:not-a-bug",
+    "color": "8B5CF6",
+    "description": "🆕 標記用：客戶誤報 / 環境問題（豁免 customer-bug）",
+    "type": "meta"
+  },
+  {
+    "name": "perf:spec-mismatch",
+    "color": "8B5CF6",
+    "description": "🆕 標記用：規格理解差異，由 PM 連帶 -2（豁免 RD customer-bug）",
+    "type": "meta"
   },
   {
     "name": "perf:tier-1",

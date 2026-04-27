@@ -126,21 +126,42 @@ def build_prompt(issue: dict, labels: list[dict], employee_roles: dict) -> str:
 ### 留言紀錄
 {issue['comments'][:1500]}
 
-## 判斷規則
+## 判斷規則（v5.1，2026-05-01 起算）
+
+考核三軸：軸1 AI 導入 / 軸2 如期交付 / 軸3 品質。**個人考核只做紅燈（找異常），不做綠燈排序**。
 
 1. **只標記有明確證據的事件**。不確定就不標。
-2. **扣分標籤（紅旗）**：只在有明確違規證據時標記。例如：
+
+2. **扣分標籤（紅旗）**：
+
+   ### 軸 2 如期
    - issue 標題或留言提到「bug 被隱瞞」「上線後才發現」→ `perf:hidden-bug`
-   - milestone 已過期 → `perf:milestone-missed`
+   - milestone 已過期 → `perf:milestone-missed`（PM -5 + RD 連帶 -2）
+     - **RD 免責條件**（命中任一即只 PM 扣分）：issue 含 `perf:scope-creep` / PM 在 milestone ≥ 50% 工期才更新 deadline / RD 被重新 assign 距 deadline < 1.5x 預估工時
    - 從留言看出 deadline 前最後一刻才通知延遲 → `perf:surprise-delay`
-   - PR 沒有 test 檔案變更 → `perf:untested-delivery`（僅 RD）
    - 客戶留言後超過 1 小時未回覆 → `perf:customer-late-reply`（僅 PM）
    - milestone 進行中新增了這個 issue → `perf:scope-creep`（僅 PM）
-3. **加分標籤（綠旗）**：在留言中看到明確的正面貢獻時標記。例如：
+
+   ### 軸 3 品質（v5.1 新增）
+   - **issue 是 reopened 事件 + closed_at 與 reopened 時間差 ≤ 30 天** → `perf:quality-rollback`（-3 給原 closer）
+     - **免責條件**：issue 含 `perf:scope-change` / `perf:intentional-rollback` label
+   - **issue 含 `perf:customer-reported` label 或留言來自客戶 GitHub 帳號**（白名單 `performance/customer-accounts.json`） → `perf:customer-bug`（-3 給主責 RD）
+     - **免責條件**：issue 含 `perf:not-a-bug` / `perf:spec-mismatch`（後者改 PM 連帶 -2）
+
+   ### 已砍除
+   - ❌ `perf:untested-delivery`：v5.1 砍除（process metric 不準），改用 quality-rollback 與 customer-bug
+
+3. **加分標籤（綠旗）**：在留言中看到明確的正面貢獻時標記：
+
+   ### 軸 1 AI 導入（v5.1 改版）
+   - 產出共用 skill / template / agent / 內訓給團隊用 → `perf:ai-contribution`（+5~10，主管確認）
+   - **已砍除**：`perf:ai-paired`（v3 行為軌）、`perf:ai-app`（v3 產出軌）→ 全併入 `perf:ai-contribution`
+
+   ### 通用
    - 做了技術研究、PoC、產出評估報告 → `perf:tech-research`
-   - 用 AI 工具提升效率或改善流程 → `perf:ai-app`
    - 處理了緊急事故且表現良好 → `perf:crisis-handling`
    - 主動幫助同事解決卡關問題 → `perf:team-backup`
+
 4. **注意角色適用性**：RD 的標籤不要標給 PM，反之亦然。
 5. **已有的 perf: 標籤不要重複標記**。
 6. **一般的 bug fix、feature 開發、日常任務不需要標記**——只標記特別好或特別差的事件。

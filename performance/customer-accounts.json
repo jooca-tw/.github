@@ -1,0 +1,6 @@
+{
+  "_comment": "客戶 GitHub 帳號白名單。auto-label.py 偵測這些帳號的 issue 留言時觸發 perf:customer-bug 判定。PM 主管月初維護。",
+  "_maintenance": "由 PM 主管於每月 1 號 review；新客戶帳號留言時 cron 會自動推 PR 提醒",
+  "_last_reviewed": "2026-04-27",
+  "customers": []
+}
