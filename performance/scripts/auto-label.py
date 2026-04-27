@@ -185,6 +185,17 @@ def build_prompt(issue: dict, labels: list[dict], employee_roles: dict) -> str:
         - 沒重議 → `perf:scope-creep-external-unmanaged`（-3，PM 變更管理失職）
      4. **internal** → `perf:scope-creep-internal`（-2，PM）
      5. ⚠️ 不要再標舊的 `perf:scope-creep`（已 deprecated v5.2）
+   - **需求變更（v5.3）vs 插單區別**：
+     - 插單 = milestone 進行中**新增 issue**（用 scope-creep 三級判定）
+     - 需求變更 = 現有 issue 的 spec 改了，**已交付一次（PR merged 或 issue closed 過）後又要重做**
+     - 偵測需求變更：留言提到「規格改了」「demo 後客戶要改」「驗收時客戶說不對」
+       + issue 已 closed 過或 PR 已 merged 過
+     - 偵測到 → 建議 PM 加 `perf:requirement-change` label（不自動扣分，由 PM 確認後加）
+     - 加分判定：若 issue 已含 `perf:requirement-change` + 該 issue 有原 RD assignee →
+       自動加 `perf:rework-credit` 給原 RD（+1/件，月度上限 +5，由 dashboard 計算）
+   - **Spec frozen 判定（v5.3）**：
+     - milestone 開始 7 天後仍無 `perf:spec-frozen` 標 + 該 milestone 內出現
+       ≥ 2 個 `perf:requirement-change` → `perf:spec-not-frozen`（-3 PM）
 
    ### 軸 3 品質（v5.1 新增）
    - **issue 是 reopened 事件 + closed_at 與 reopened 時間差 ≤ 30 天** → `perf:quality-rollback`（-3 給原 closer）

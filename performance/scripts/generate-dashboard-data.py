@@ -122,6 +122,9 @@ def fetch_perf_issues() -> list[dict]:
         "perf:scope-creep-external-unmanaged",
         "perf:scope-creep-internal",
         "perf:change-management-good",
+        # v5.3 需求變更
+        "perf:requirement-change", "perf:rework-credit",
+        "perf:spec-not-frozen",
         # v5.1 軸3 品質
         "perf:hidden-bug", "perf:quality-rollback", "perf:customer-bug",
         # v5.1 軸1 AI 導入
@@ -254,6 +257,13 @@ def build_data(employees: dict, perf_labels: dict, issues: list[dict]) -> dict:
                     emp["review_lag_count"] += 1
                     if emp["review_lag_count"] > 5:
                         # 已達月度上限 -5，後續不再扣
+                        score = 0
+
+                # v5.3 rework-credit 月度上限 +5
+                if lb_name == "perf:rework-credit":
+                    emp.setdefault("rework_credit_count", 0)
+                    emp["rework_credit_count"] += 1
+                    if emp["rework_credit_count"] > 5:
                         score = 0
 
                 emp["total_score"] += score

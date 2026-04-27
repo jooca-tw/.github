@@ -81,6 +81,39 @@
     "type": "deduction"
   },
   {
+    "name": "perf:requirement-change",
+    "color": "8B5CF6",
+    "description": "🆕 v5.3 需求變更（已交付一次後規格改了）：純紀錄，觸發 rework-credit 給原 RD",
+    "type": "info"
+  },
+  {
+    "name": "perf:rework-credit",
+    "color": "16A34A",
+    "description": "🆕 v5.3 重做認列：requirement-change 自動觸發給原 RD（+1/件，月度上限 +5）",
+    "score": 1,
+    "monthly_cap": 5,
+    "axis": "axis2-on-time",
+    "role": "rd",
+    "auto": true,
+    "type": "bonus"
+  },
+  {
+    "name": "perf:spec-frozen",
+    "color": "8B5CF6",
+    "description": "🆕 v5.3 標記用：PM 在 milestone 開始時鎖定規格（防止 spec-not-frozen 觸發）",
+    "type": "meta"
+  },
+  {
+    "name": "perf:spec-not-frozen",
+    "color": "DC2626",
+    "description": "🆕 v5.3 milestone 開始 7 天後仍無 spec-frozen + ≥ 2 次 requirement-change（-3，PM 規格釐清失職，軸2 如期）",
+    "score": -3,
+    "axis": "axis2-on-time",
+    "role": "pm",
+    "auto": true,
+    "type": "deduction"
+  },
+  {
     "name": "perf:milestone-renegotiated",
     "color": "8B5CF6",
     "description": "🆕 v5.2 標記用：PM 在 milestone 進行中正式重議了 deadline（觸發 scope-creep-external-handled 判定）",
