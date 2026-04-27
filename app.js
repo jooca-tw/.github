@@ -260,16 +260,24 @@ function renderPage2(data) {
 
   const issuesSlot = document.getElementById('issues-slot');
   if (issuesSlot && member.issue_list) {
-    issuesSlot.innerHTML = member.issue_list.map(iss => `
+    issuesSlot.innerHTML = member.issue_list.map(iss => {
+      const idHtml = iss.url
+        ? `<a class="num issue-link" href="${esc(iss.url)}" target="_blank" rel="noopener">${esc(iss.id)}</a>`
+        : `<div class="num">${esc(iss.id)}</div>`;
+      const titleHtml = iss.url
+        ? `<a class="title issue-link" href="${esc(iss.url)}" target="_blank" rel="noopener">${esc(iss.title)}</a>`
+        : `<div class="title">${esc(iss.title)}</div>`;
+      return `
       <div class="issue-row">
-        <div class="num">${esc(iss.id)}</div>
-        <div class="title">${esc(iss.title)}</div>
+        ${idHtml}
+        ${titleHtml}
         <div class="labels">
           <span class="label label-red">${esc(iss.category)}</span>
           <span class="label ${statusClass(iss.status)}">${esc(iss.status)}</span>
         </div>
       </div>
-    `).join('');
+    `;
+    }).join('');
   }
 
   // KPI grid
