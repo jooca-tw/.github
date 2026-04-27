@@ -82,15 +82,22 @@ function resolvePath(obj, path) {
 // ══════════════════════════════════════════════
 
 function renderPage1(data) {
-  const { stats, members, alert_summary } = data;
+  const { stats, members, alert_summary, team_kpi } = data;
 
-  // Stats
+  // Stats + v5.1 team KPI
   renderSlots({
     stats,
+    team_kpi: team_kpi || {},
     alerts_count: stats.alerts_count,
     member_count: stats.member_count,
     dept_subtitle: `${stats.department_name} · ${stats.member_count} members · ${stats.period_label}`,
   });
+
+  // Hide team KPI section if no data (graceful fallback)
+  const kpiSection = document.getElementById('team-kpi-section');
+  if (kpiSection && !team_kpi) {
+    kpiSection.style.display = 'none';
+  }
 
   // State
   let sortKey = 'score';
