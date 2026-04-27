@@ -41,14 +41,61 @@
     "type": "deduction"
   },
   {
-    "name": "perf:scope-creep",
+    "name": "perf:scope-creep-external-handled",
+    "color": "8B5CF6",
+    "description": "🆕 v5.2 客戶插單 + PM 已重議 milestone（0 扣分，紀錄）",
+    "score": 0,
+    "axis": "axis2-on-time",
+    "role": "pm",
+    "auto": true,
+    "type": "info"
+  },
+  {
+    "name": "perf:scope-creep-external-unmanaged",
     "color": "DC2626",
-    "description": "需求異動：milestone 進行中新增 issue（-2，PM，軸2 如期）",
+    "description": "🆕 v5.2 客戶插單 + PM 沒重議 milestone（-3，PM 變更管理失職，軸2 如期）",
+    "score": -3,
+    "axis": "axis2-on-time",
+    "role": "pm",
+    "auto": true,
+    "type": "deduction"
+  },
+  {
+    "name": "perf:scope-creep-internal",
+    "color": "DC2626",
+    "description": "🆕 v5.2 內部加項（非客戶要求）：milestone 進行中新增（-2，PM，軸2 如期）",
     "score": -2,
     "axis": "axis2-on-time",
     "role": "pm",
     "auto": true,
     "type": "deduction"
+  },
+  {
+    "name": "perf:scope-creep",
+    "color": "9CA3AF",
+    "description": "⚠️ Deprecated v5.2：請改用 scope-creep-external-handled / external-unmanaged / internal",
+    "score": -2,
+    "axis": "axis2-on-time",
+    "role": "pm",
+    "auto": false,
+    "type": "deduction"
+  },
+  {
+    "name": "perf:milestone-renegotiated",
+    "color": "8B5CF6",
+    "description": "🆕 v5.2 標記用：PM 在 milestone 進行中正式重議了 deadline（觸發 scope-creep-external-handled 判定）",
+    "type": "meta"
+  },
+  {
+    "name": "perf:change-management-good",
+    "color": "16A34A",
+    "description": "🆕 v5.2 高擾動加分：月內 ≥ 3 次客戶插單 + 全部 milestone-renegotiated + 命中率 ≥ 80%（+5~10，PM）",
+    "score_range": [5, 10],
+    "axis": "axis2-on-time",
+    "role": "pm",
+    "auto": false,
+    "type": "bonus",
+    "requires_confirm": true
   },
   {
     "name": "perf:quality-rollback",

@@ -115,8 +115,13 @@ def fetch_perf_issues() -> list[dict]:
     perf_label_names = [
         # v5.1 軸2 如期
         "perf:milestone-missed", "perf:surprise-delay",
-        "perf:customer-late-reply", "perf:scope-creep",
+        "perf:customer-late-reply",
         "perf:review-lag",
+        # v5.2 scope-creep 三級拆分
+        "perf:scope-creep-external-handled",
+        "perf:scope-creep-external-unmanaged",
+        "perf:scope-creep-internal",
+        "perf:change-management-good",
         # v5.1 軸3 品質
         "perf:hidden-bug", "perf:quality-rollback", "perf:customer-bug",
         # v5.1 軸1 AI 導入
@@ -124,8 +129,9 @@ def fetch_perf_issues() -> list[dict]:
         # 通用加分（保留）
         "perf:tech-research", "perf:crisis-handling",
         "perf:team-backup", "perf:tier-jump",
-        # v3 相容（暫保留以支援過渡期歷史資料）
-        "perf:untested-delivery", "perf:ai-app", "perf:ai-paired",
+        # v3/v5.1 相容（暫保留以支援過渡期歷史資料）
+        "perf:scope-creep", "perf:untested-delivery",
+        "perf:ai-app", "perf:ai-paired",
     ]
     seen = set()
     all_issues = []
@@ -427,6 +433,13 @@ def build_team_kpi(emp_data: dict, issues: list[dict], perf_labels: dict) -> dic
         by_system[st]["rollback"] += v["labels_hit"].get("perf:quality-rollback", 0)
         by_system[st]["customer_bug"] += v["labels_hit"].get("perf:customer-bug", 0)
 
+    # v5.2 客戶插單頻率 + 變更管理覆蓋率
+    scope_external_handled = sum(v["labels_hit"].get("perf:scope-creep-external-handled", 0) for v in members_only.values())
+    scope_external_unmanaged = sum(v["labels_hit"].get("perf:scope-creep-external-unmanaged", 0) for v in members_only.values())
+    scope_internal = sum(v["labels_hit"].get("perf:scope-creep-internal", 0) for v in members_only.values())
+    scope_external_total = scope_external_handled + scope_external_unmanaged
+    change_mgmt_coverage = round(scope_external_handled / scope_external_total * 100) if scope_external_total else None
+
     return {
         "axis1_ai_adoption": {
             "title": "軸 1：AI 導入",
@@ -439,6 +452,11 @@ def build_team_kpi(emp_data: dict, issues: list[dict], perf_labels: dict) -> dic
             "title": "軸 2：如期交付",
             "milestone_hit_rate": on_time_rate,  # %（None = 無資料）
             "milestone_miss_count": miss_count,
+            # v5.2 客戶插單變更管理
+            "scope_external_total": scope_external_total,
+            "scope_internal": scope_internal,
+            "change_mgmt_coverage": change_mgmt_coverage,  # %（目標 ≥ 90）
+            "change_mgmt_target": 90,
         },
         "axis3_quality": {
             "title": "軸 3：品質",

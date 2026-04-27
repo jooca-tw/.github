@@ -176,7 +176,15 @@ def build_prompt(issue: dict, labels: list[dict], employee_roles: dict) -> str:
      - **RD 免責條件**（命中任一即只 PM 扣分）：issue 含 `perf:scope-creep` / PM 在 milestone ≥ 50% 工期才更新 deadline / RD 被重新 assign 距 deadline < 1.5x 預估工時
    - 從留言看出 deadline 前最後一刻才通知延遲 → `perf:surprise-delay`
    - 客戶留言後超過 1 小時未回覆 → `perf:customer-late-reply`（僅 PM）
-   - milestone 進行中新增了這個 issue → `perf:scope-creep`（僅 PM）
+   - **scope creep 判定（v5.2 三級）**：
+     1. issue created_at 在 milestone 開始之後（進行中新增）→ 進入下面判定
+     2. **來源**：issue 含「客戶」字眼 / 客戶 GitHub 帳號 mention → external；否則 internal
+     3. **external 子分支**：
+        - 該 issue 加入後 24h 內已被加 `perf:milestone-renegotiated` label
+          + milestone due_on 已更新 → `perf:scope-creep-external-handled`（0 扣分，純紀錄）
+        - 沒重議 → `perf:scope-creep-external-unmanaged`（-3，PM 變更管理失職）
+     4. **internal** → `perf:scope-creep-internal`（-2，PM）
+     5. ⚠️ 不要再標舊的 `perf:scope-creep`（已 deprecated v5.2）
 
    ### 軸 3 品質（v5.1 新增）
    - **issue 是 reopened 事件 + closed_at 與 reopened 時間差 ≤ 30 天** → `perf:quality-rollback`（-3 給原 closer）
