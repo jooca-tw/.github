@@ -23,7 +23,11 @@
     "axis2_on_time": {
       "title": "軸 2：如期交付",
       "milestone_hit_rate": null,
-      "milestone_miss_count": 1
+      "milestone_miss_count": 1,
+      "scope_external_total": 0,
+      "scope_internal": 0,
+      "change_mgmt_coverage": null,
+      "change_mgmt_target": 90
     },
     "axis3_quality": {
       "title": "軸 3：品質",
