@@ -44,6 +44,7 @@ SCHEMA: dict = {
         "left_at":      {"type": "string", "format": "date"},
         "notes":        {"type": "string"},
         "projects":    {"type": "array", "items": {"type": "string"}},
+        "system_type": {"enum": ["legacy", "new-feature", "internal-tooling", "general"]},
     },
     "allOf": [
         {"if": {"properties": {"active": {"const": False}}}, "then": {"required": ["left_at"]}},
