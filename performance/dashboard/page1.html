@@ -41,6 +41,13 @@
         </div>
       </div>
 
+      <!-- v5.3 deprecated label 警告 banner -->
+      <div id="deprecated-banner" class="deprecated-banner" style="display:none">
+        ⚠️ <strong>過渡期警告</strong>：偵測到 <span data-render="stats.deprecated_total">0</span> 個 deprecated label 仍在使用。
+        <code>perf:scope-creep</code> 已拆三級、<code>perf:untested-delivery</code> 已砍除、<code>perf:ai-app</code> 已併入 ai-contribution。
+        請改用 v5.1+ 新 label。
+      </div>
+
       <div class="stats" id="dept-stats">
         <div class="stat">
           <div class="label">平均分數</div>
@@ -55,7 +62,10 @@
         <div class="stat">
           <div class="label">本月 ISSUES</div>
           <div class="value" data-render="stats.total_issues">—</div>
-          <div class="delta">—</div>
+          <div class="delta">
+            🔴 <span data-render="stats.red_label_count">0</span>
+            · 🟢 <span data-render="stats.green_label_count">0</span>
+          </div>
         </div>
         <div class="stat">
           <div class="label">S / A tier</div>
@@ -107,6 +117,12 @@
               · 變更管理覆蓋率 <span data-render="team_kpi.axis2_on_time.change_mgmt_coverage">—</span>%
               <span style="color:var(--text-3)">（目標 ≥ <span data-render="team_kpi.axis2_on_time.change_mgmt_target">90</span>%）</span>
             </div>
+            <div class="team-kpi-meta" style="margin-top:6px;border-top:1px solid var(--border-soft);padding-top:6px">
+              <strong>v5.3 需求變更</strong>：
+              spec-not-frozen <span data-render="team_kpi.axis2_on_time.spec_not_frozen_count">0</span>
+              · req-change <span data-render="team_kpi.axis2_on_time.requirement_change_count">0</span>
+              · rework-credit 總計 <span data-render="team_kpi.axis2_on_time.rework_credit_total">0</span>
+            </div>
           </div>
           <div class="team-kpi-card axis-quality">
             <div class="team-kpi-axis-label">軸 3 · 品質</div>
@@ -120,8 +136,27 @@
             </div>
           </div>
         </div>
+        <!-- v5.3 by_system_type 分組表（避免劣幣驅良幣） -->
+        <div class="by-system-section">
+          <div class="by-system-title">📁 系統類型分組（避免維護組與新功能組直接比較）</div>
+          <table class="by-system-table" id="by-system-table">
+            <thead>
+              <tr>
+                <th>系統類型</th>
+                <th class="num">人數</th>
+                <th class="num">AI 零行為</th>
+                <th class="num">Rollback</th>
+                <th class="num">客戶端 Bug</th>
+              </tr>
+            </thead>
+            <tbody id="by-system-tbody">
+              <!-- 由 app.js 渲染 -->
+            </tbody>
+          </table>
+        </div>
+
         <div class="team-kpi-note">
-          <strong>📊 注意</strong>：這是團隊層 leading indicator，個人考核仍以紅燈為主。系統類型分組視覺化（避免維護組屎缺難看）正在開發中。
+          <strong>📊 注意</strong>：這是團隊層 leading indicator，個人考核仍以紅燈為主。趨勢看月度進步幅度，不直接跨組比較絕對值。
         </div>
       </div>
 

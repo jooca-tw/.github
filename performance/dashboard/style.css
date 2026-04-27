@@ -576,3 +576,78 @@ a:hover { text-decoration: underline; }
   border-left: 3px solid var(--accent, #2f81f7);
 }
 @media (max-width: 900px) { .team-kpi-grid { grid-template-columns: 1fr; } }
+
+/* v5.3 deprecated 警告 banner */
+.deprecated-banner {
+  background: rgba(245, 158, 11, 0.08);
+  border: 1px solid #F59E0B;
+  border-left-width: 4px;
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-size: 13px;
+  color: var(--text);
+  margin-bottom: 14px;
+}
+.deprecated-banner code {
+  background: rgba(0, 0, 0, 0.18);
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+
+/* v5.3 by_system_type 分組表 */
+.by-system-section { margin-top: 12px; }
+.by-system-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-3);
+  margin-bottom: 8px;
+}
+.by-system-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--bg-1);
+  border-radius: 6px;
+  overflow: hidden;
+  font-size: 13px;
+}
+.by-system-table th {
+  background: var(--bg-2);
+  padding: 8px 12px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 11px;
+  color: var(--text-3);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--border-soft);
+}
+.by-system-table th.num, .by-system-table td.num { text-align: right; }
+.by-system-table td {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border-soft);
+}
+.by-system-table tr:last-child td { border-bottom: none; }
+
+/* v5.3 PM Layer 3 季度評估面板 */
+.layer3-panel {
+  border-left: 4px solid #8B5CF6;
+}
+.layer3-link, .layer3-empty {
+  padding: 12px 0;
+  font-size: 14px;
+  color: var(--text);
+}
+.layer3-empty { color: var(--text-3); }
+.layer3-meta {
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--text-3);
+}
+.layer3-anchor {
+  color: #8B5CF6;
+  font-weight: 600;
+  text-decoration: none;
+}
+.layer3-anchor:hover { text-decoration: underline; }

@@ -83,10 +83,11 @@ function resolvePath(obj, path) {
 
 function renderPage1(data) {
   const { stats, members, alert_summary, team_kpi } = data;
+  const deprecated = data.deprecated_warnings || team_kpi?.deprecated_warnings || {};
 
   // Stats + v5.1 team KPI
   renderSlots({
-    stats,
+    stats: { ...stats, deprecated_total: deprecated.total || 0 },
     team_kpi: team_kpi || {},
     alerts_count: stats.alerts_count,
     member_count: stats.member_count,
@@ -97,6 +98,34 @@ function renderPage1(data) {
   const kpiSection = document.getElementById('team-kpi-section');
   if (kpiSection && !team_kpi) {
     kpiSection.style.display = 'none';
+  }
+
+  // v5.3 deprecated label warning banner
+  const banner = document.getElementById('deprecated-banner');
+  if (banner) {
+    banner.style.display = (deprecated.total || 0) > 0 ? 'block' : 'none';
+  }
+
+  // v5.3 by_system_type 分組表
+  const tbody = document.getElementById('by-system-tbody');
+  if (tbody && team_kpi?.by_system_type) {
+    const SYSTEM_LABELS = {
+      'legacy': '🏛️ Legacy 維護',
+      'new-feature': '✨ 新功能',
+      'internal-tooling': '🛠️ 內部工具',
+      'general': '📦 通用 / 未分類',
+    };
+    const rows = Object.entries(team_kpi.by_system_type).map(([type, stat]) => {
+      const label = SYSTEM_LABELS[type] || type;
+      return `<tr>
+        <td>${esc(label)}</td>
+        <td class="num">${stat.count || 0}</td>
+        <td class="num">${stat.ai_zero || 0}</td>
+        <td class="num">${stat.rollback || 0}</td>
+        <td class="num">${stat.customer_bug || 0}</td>
+      </tr>`;
+    }).join('');
+    tbody.innerHTML = rows || `<tr><td colspan="5" class="empty">無資料</td></tr>`;
   }
 
   // State
@@ -264,6 +293,41 @@ function renderPage2(data) {
   // Issues
   const issueCountEl = document.querySelector('[data-render="member.issue_count"]');
   if (issueCountEl) issueCountEl.textContent = (member.issue_list || []).length;
+
+  // v5.3 PM Layer 3 季度評估區
+  const layer3Panel = document.getElementById('layer3-panel');
+  const layer3Content = document.getElementById('layer3-content');
+  if (layer3Panel && layer3Content) {
+    const isPM = (member.role_key || '').includes('pm');
+    if (isPM) {
+      layer3Panel.style.display = 'block';
+      if (member.quarterly_review_url) {
+        layer3Content.innerHTML = `
+          <div class="layer3-link">
+            ✅ 最新季度評估 issue：
+            <a href="${esc(member.quarterly_review_url)}" target="_blank" rel="noopener" class="layer3-anchor">
+              ${esc(member.quarterly_review_url.split('/').pop())} →
+            </a>
+          </div>
+          <div class="layer3-meta">
+            v5.3 PM 績效 Layer 3 占 30%。BU Head + PM 主管季度 1-on-1 評估。
+          </div>
+        `;
+      } else {
+        layer3Content.innerHTML = `
+          <div class="layer3-empty">
+            ⚠️ 此 PM 尚無季度評估 issue。
+            <br>
+            <a href="https://github.com/jooca-tw/.github/issues/new?template=quarterly-pm-review.md" target="_blank" rel="noopener" class="layer3-anchor">
+              開新評估 issue →
+            </a>
+          </div>
+        `;
+      }
+    } else {
+      layer3Panel.style.display = 'none';
+    }
+  }
 
   const issuesSlot = document.getElementById('issues-slot');
   if (issuesSlot && member.issue_list) {

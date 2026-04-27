@@ -301,10 +301,14 @@ def build_data(employees: dict, perf_labels: dict, issues: list[dict]) -> dict:
                 if cat and cat not in focus_tags:
                     focus_tags.append(cat)
 
-        # KPIs
+        # KPIs (v5.3 改用真實 axis_scores 計算各軸實際分數)
         kpis = []
+        axis_to_cat = {a: AXES[a] for a in AXES}
         for cat in CATEGORIES:
-            cat_score = score  # simplified: same as overall for now
+            # 找對應 axis key
+            axis_key = next((a for a, n in axis_to_cat.items() if n == cat), "general")
+            axis_delta = emp["axis_scores"].get(axis_key, 0)  # 軸內加減分
+            cat_score = max(0, min(100, 60 + axis_delta))  # 60 baseline + 軸內事件
             kpis.append({
                 "name": cat,
                 "score": cat_score,
@@ -320,8 +324,10 @@ def build_data(employees: dict, perf_labels: dict, issues: list[dict]) -> dict:
             "name": emp["name"],
             "initials": initials_str,
             "role": emp["role"],
+            "role_key": emp.get("role_key", ""),
             "team": ", ".join(emp["projects"][:2]) if emp["projects"] else "",
             "subtitle": f"{emp['role']} · {emp['login']}",
+            "system_type": emp.get("system_type", "general"),
             "tier": tier,
             "alert": alert,
             "issues": len(emp["issue_list"]),
@@ -335,6 +341,11 @@ def build_data(employees: dict, perf_labels: dict, issues: list[dict]) -> dict:
             },
             "kpis": kpis,
             "issue_list": emp["issue_list"],
+            # v5.3 PM Layer 3 季度評估
+            "quarterly_review_url": find_quarterly_review_url(emp["login"], emp.get("role_key", "")),
+            # v5.3 個人 KPI 補完
+            "rework_credit_count": emp.get("rework_credit_count", 0),
+            "review_lag_count": emp.get("review_lag_count", 0),
         })
 
     # Build alerts
@@ -379,6 +390,17 @@ def build_data(employees: dict, perf_labels: dict, issues: list[dict]) -> dict:
     total_issues = sum(m["issues"] for m in members)
     alerts_count = len(alerts)
 
+    # v5.3 拆紅綠燈件數（從 emp_data labels_hit 算）
+    red_label_count = 0
+    green_label_count = 0
+    for v in emp_data.values():
+        for lb_name, cnt in v.get("labels_hit", {}).items():
+            ld = perf_labels.get(lb_name, {})
+            if ld.get("type") == "deduction":
+                red_label_count += cnt
+            elif ld.get("type") == "bonus":
+                green_label_count += cnt
+
     stats = {
         "department_name": "O 部門",
         "period_label": now.strftime("%Y 年 %-m 月"),
@@ -388,6 +410,8 @@ def build_data(employees: dict, perf_labels: dict, issues: list[dict]) -> dict:
         "completion_rate": f"{round(avg_score)}%",
         "completion_rate_delta": "—",
         "total_issues": total_issues,
+        "red_label_count": red_label_count,    # v5.3 紅燈件數
+        "green_label_count": green_label_count,  # v5.3 綠燈件數
         "sa_tier_count": sa_count,
         "alerts_count": alerts_count,
         "alerts_delta": "—",
@@ -450,6 +474,16 @@ def build_team_kpi(emp_data: dict, issues: list[dict], perf_labels: dict) -> dic
     scope_external_total = scope_external_handled + scope_external_unmanaged
     change_mgmt_coverage = round(scope_external_handled / scope_external_total * 100) if scope_external_total else None
 
+    # v5.3 spec-not-frozen / requirement-change / rework-credit
+    spec_not_frozen_count = sum(v["labels_hit"].get("perf:spec-not-frozen", 0) for v in members_only.values())
+    req_change_count = sum(v["labels_hit"].get("perf:requirement-change", 0) for v in members_only.values())
+    rework_credit_total = sum(v["labels_hit"].get("perf:rework-credit", 0) for v in members_only.values())
+
+    # deprecated label 偵測（過渡期警告）
+    deprecated_scope_creep = sum(v["labels_hit"].get("perf:scope-creep", 0) for v in members_only.values())
+    deprecated_untested = sum(v["labels_hit"].get("perf:untested-delivery", 0) for v in members_only.values())
+    deprecated_ai_app = sum(v["labels_hit"].get("perf:ai-app", 0) for v in members_only.values())
+
     return {
         "axis1_ai_adoption": {
             "title": "軸 1：AI 導入",
@@ -467,6 +501,16 @@ def build_team_kpi(emp_data: dict, issues: list[dict], perf_labels: dict) -> dic
             "scope_internal": scope_internal,
             "change_mgmt_coverage": change_mgmt_coverage,  # %（目標 ≥ 90）
             "change_mgmt_target": 90,
+            # v5.3 需求變更
+            "spec_not_frozen_count": spec_not_frozen_count,
+            "requirement_change_count": req_change_count,
+            "rework_credit_total": rework_credit_total,
+        },
+        "deprecated_warnings": {
+            "scope_creep": deprecated_scope_creep,
+            "untested_delivery": deprecated_untested,
+            "ai_app": deprecated_ai_app,
+            "total": deprecated_scope_creep + deprecated_untested + deprecated_ai_app,
         },
         "axis3_quality": {
             "title": "軸 3：品質",
@@ -477,6 +521,32 @@ def build_team_kpi(emp_data: dict, issues: list[dict], perf_labels: dict) -> dic
         "by_system_type": by_system,
         "note": "v5.1 leading indicator。個人考核只做紅燈，這份趨勢給全員看（鼓勵團隊層改善，避免個別比較）",
     }
+
+
+def find_quarterly_review_url(login: str, role_key: str) -> str | None:
+    """v5.3 Layer 3：對 PM 角色找最新的季度 PM Review issue 連結"""
+    if "pm" not in (role_key or "").lower():
+        return None
+    try:
+        result = subprocess.run(
+            ["gh", "search", "issues", "--owner", ORG,
+             "--label", "perf:quarterly-review",
+             "--match", "title", login,
+             "--limit", "5",
+             "--json", "url,title,createdAt"],
+            capture_output=True, text=True, timeout=30,
+        )
+        if result.returncode != 0:
+            return None
+        items = json.loads(result.stdout) if result.stdout.strip() else []
+        if not items:
+            # 退而求其次：標題含名字（中文）
+            return None
+        # 取最新
+        items.sort(key=lambda x: x.get("createdAt", ""), reverse=True)
+        return items[0].get("url")
+    except Exception:
+        return None
 
 
 def score_to_tier(score: int) -> str:
