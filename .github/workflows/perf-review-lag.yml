@@ -89,23 +89,27 @@ jobs:
             BODY=$(cat review-lag.jsonl)
 
             if [ -z "$EXIST" ]; then
-              gh issue create --repo jooca-tw/.github \
-                --title "$LOG_TITLE" \
-                --body "本月 review-lag 偵測紀錄（每天累加）：
-
-\`\`\`jsonl
-$BODY
-\`\`\`
-
-由 perf-review-lag cron 自動產生。月底由 monthly-review 彙整給主管確認。" \
-                --label "perf:log" || echo "Failed to create issue"
+              CREATE_BODY=$(mktemp)
+              {
+                echo "本月 review-lag 偵測紀錄（每天累加）："
+                echo ""
+                echo '```jsonl'
+                cat review-lag.jsonl
+                echo '```'
+                echo ""
+                echo "由 perf-review-lag cron 自動產生。月底由 monthly-review 彙整給主管確認。"
+              } > "$CREATE_BODY"
+              gh issue create --repo jooca-tw/.github --title "$LOG_TITLE" -F "$CREATE_BODY" --label "perf:log" || echo "Failed to create issue"
             else
-              gh issue comment "$EXIST" --repo jooca-tw/.github \
-                --body "$(date -u +%Y-%m-%dT%H:%MZ) 新增：
-
-\`\`\`jsonl
-$BODY
-\`\`\`" || echo "Failed to comment"
+              COMMENT_BODY=$(mktemp)
+              {
+                echo "$(date -u +%Y-%m-%dT%H:%MZ) 新增："
+                echo ""
+                echo '```jsonl'
+                cat review-lag.jsonl
+                echo '```'
+              } > "$COMMENT_BODY"
+              gh issue comment "$EXIST" --repo jooca-tw/.github -F "$COMMENT_BODY" || echo "Failed to comment"
             fi
           else
             echo "No review-lag events today ✅"

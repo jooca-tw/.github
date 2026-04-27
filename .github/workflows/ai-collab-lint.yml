@@ -89,11 +89,14 @@ jobs:
               ;;
           esac
 
-          # 留 PR comment
-          gh pr comment "$PR_NUMBER" --repo "$PR_REPO" --body "$MSG
-
-> v5.1 過渡期：此檢查為 \`mode=$MODE\`。預計 2026-05-01 起改為 \`block\` 模式（缺項或不合格將 block merge）。
-> 詳見 [評分維度調整提案](https://github.com/Hyweb-JayKao/FLUX/blob/main/Efforts/Areas/O%E9%83%A8%E9%96%80%E7%AE%A1%E7%90%86/performance/2026-04-27%20%E8%A9%95%E5%88%86%E7%B6%AD%E5%BA%A6%E8%AA%BF%E6%95%B4%E6%8F%90%E6%A1%88.md)（內網）" || echo "Failed to post comment, continuing"
+          # 留 PR comment（用 -F 從檔案讀，避免多行 quote 問題）
+          COMMENT_FILE=$(mktemp)
+          {
+            echo "$MSG"
+            echo ""
+            echo "> v5.1 過渡期：此檢查為 \`mode=$MODE\`。預計 2026-05-01 起改為 \`block\` 模式（缺項或不合格將 block merge）。"
+          } > "$COMMENT_FILE"
+          gh pr comment "$PR_NUMBER" --repo "$PR_REPO" -F "$COMMENT_FILE" || echo "Failed to post comment, continuing"
 
           if [ "$MODE" = "block" ]; then
             echo "::error::AI Collaboration section validation failed: $STATUS"
