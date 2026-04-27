@@ -192,6 +192,7 @@ def build_data(employees: dict, perf_labels: dict, issues: list[dict]) -> dict:
             "title": issue.get("title", ""),
             "category": category,
             "status": status,
+            "url": issue.get("url", ""),
         }
 
         for assignee in assignees:
