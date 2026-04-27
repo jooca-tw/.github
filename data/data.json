@@ -8,6 +8,8 @@
     "completion_rate": "60%",
     "completion_rate_delta": "—",
     "total_issues": 2,
+    "red_label_count": 2,
+    "green_label_count": 0,
     "sa_tier_count": 0,
     "alerts_count": 2,
     "alerts_delta": "—"
@@ -27,7 +29,16 @@
       "scope_external_total": 0,
       "scope_internal": 0,
       "change_mgmt_coverage": null,
-      "change_mgmt_target": 90
+      "change_mgmt_target": 90,
+      "spec_not_frozen_count": 0,
+      "requirement_change_count": 0,
+      "rework_credit_total": 0
+    },
+    "deprecated_warnings": {
+      "scope_creep": 0,
+      "untested_delivery": 0,
+      "ai_app": 0,
+      "total": 0
     },
     "axis3_quality": {
       "title": "軸 3：品質",
@@ -56,8 +67,10 @@
       "name": "蕭浩良",
       "initials": "浩良",
       "role": "資深工程師",
+      "role_key": "senior-rd-b",
       "team": "打詐 App, 新竹縣圖書館尋書導引",
       "subtitle": "資深工程師 · Hyweb-HowardHsiao",
+      "system_type": "general",
       "tier": "C",
       "alert": "ok",
       "issues": 0,
@@ -195,14 +208,19 @@
           ]
         }
       ],
-      "issue_list": []
+      "issue_list": [],
+      "quarterly_review_url": null,
+      "rework_credit_count": 0,
+      "review_lag_count": 0
     },
     {
       "name": "梁閔傑",
       "initials": "閔傑",
       "role": "專案經理",
+      "role_key": "pm",
       "team": "臺灣主權 AI, 移民署行動數位證",
       "subtitle": "專案經理 · Hyweb-WalterLiang",
+      "system_type": "general",
       "tier": "C",
       "alert": "ok",
       "issues": 0,
@@ -340,14 +358,19 @@
           ]
         }
       ],
-      "issue_list": []
+      "issue_list": [],
+      "quarterly_review_url": null,
+      "rework_credit_count": 0,
+      "review_lag_count": 0
     },
     {
       "name": "黃俊瑋",
       "initials": "俊瑋",
       "role": "初級工程師",
+      "role_key": "junior-rd",
       "team": "台北市立圖書館, 台中市立圖書館",
       "subtitle": "初級工程師 · Hyweb-JackHuang",
+      "system_type": "general",
       "tier": "C",
       "alert": "ok",
       "issues": 0,
@@ -485,14 +508,19 @@
           ]
         }
       ],
-      "issue_list": []
+      "issue_list": [],
+      "quarterly_review_url": null,
+      "rework_credit_count": 0,
+      "review_lag_count": 0
     },
     {
       "name": "王國丞",
       "initials": "國丞",
       "role": "資深工程師",
+      "role_key": "senior-rd-a",
       "team": "Zuba, 臺灣主權 AI",
       "subtitle": "資深工程師 · Hyweb-HanWang",
+      "system_type": "general",
       "tier": "C",
       "alert": "orange",
       "issues": 1,
@@ -573,17 +601,17 @@
       "kpis": [
         {
           "name": "AI 導入",
-          "score": 58,
-          "prev": 58,
+          "score": 60,
+          "prev": 60,
           "delta": 0,
-          "status": "未達標",
+          "status": "已完成",
           "trend": [
-            58,
-            58,
-            58,
-            58,
-            58,
-            58
+            60,
+            60,
+            60,
+            60,
+            60,
+            60
           ]
         },
         {
@@ -603,32 +631,32 @@
         },
         {
           "name": "品質",
-          "score": 58,
-          "prev": 58,
+          "score": 60,
+          "prev": 60,
           "delta": 0,
-          "status": "未達標",
+          "status": "已完成",
           "trend": [
-            58,
-            58,
-            58,
-            58,
-            58,
-            58
+            60,
+            60,
+            60,
+            60,
+            60,
+            60
           ]
         },
         {
           "name": "通用",
-          "score": 58,
-          "prev": 58,
+          "score": 60,
+          "prev": 60,
           "delta": 0,
-          "status": "未達標",
+          "status": "已完成",
           "trend": [
-            58,
-            58,
-            58,
-            58,
-            58,
-            58
+            60,
+            60,
+            60,
+            60,
+            60,
+            60
           ]
         }
       ],
@@ -640,14 +668,19 @@
           "status": "進行中",
           "url": "https://github.com/jooca-tw/project_corpus_ai/issues/407"
         }
-      ]
+      ],
+      "quarterly_review_url": null,
+      "rework_credit_count": 0,
+      "review_lag_count": 0
     },
     {
       "name": "邵俊棋",
       "initials": "俊棋",
       "role": "資深工程師",
+      "role_key": "senior-rd-a",
       "team": "BBL, 移民署行動數位證",
       "subtitle": "資深工程師 · Hyweb-GilesShao",
+      "system_type": "general",
       "tier": "C",
       "alert": "ok",
       "issues": 0,
@@ -785,14 +818,19 @@
           ]
         }
       ],
-      "issue_list": []
+      "issue_list": [],
+      "quarterly_review_url": null,
+      "rework_credit_count": 0,
+      "review_lag_count": 0
     },
     {
       "name": "潘思穎",
       "initials": "思穎",
       "role": "專案經理",
+      "role_key": "pm",
       "team": "輔助全部 PM, Zuba",
       "subtitle": "專案經理 · Hyweb-NinaPan",
+      "system_type": "general",
       "tier": "C",
       "alert": "ok",
       "issues": 0,
@@ -930,14 +968,19 @@
           ]
         }
       ],
-      "issue_list": []
+      "issue_list": [],
+      "quarterly_review_url": null,
+      "rework_credit_count": 0,
+      "review_lag_count": 0
     },
     {
       "name": "黃瑞生",
       "initials": "瑞生",
       "role": "專案經理",
+      "role_key": "pm",
       "team": "BBL, Zuba",
       "subtitle": "專案經理 · hyweb-Donald",
+      "system_type": "general",
       "tier": "C",
       "alert": "ok",
       "issues": 0,
@@ -1075,14 +1118,19 @@
           ]
         }
       ],
-      "issue_list": []
+      "issue_list": [],
+      "quarterly_review_url": null,
+      "rework_credit_count": 0,
+      "review_lag_count": 0
     },
     {
       "name": "鍾題駿",
       "initials": "題駿",
       "role": "初級工程師",
+      "role_key": "junior-rd",
       "team": "國臺圖, 全國加油站",
       "subtitle": "初級工程師 · Hyweb-DannyChung",
+      "system_type": "new-feature",
       "tier": "C",
       "alert": "ok",
       "issues": 0,
@@ -1220,14 +1268,19 @@
           ]
         }
       ],
-      "issue_list": []
+      "issue_list": [],
+      "quarterly_review_url": null,
+      "rework_credit_count": 0,
+      "review_lag_count": 0
     },
     {
       "name": "許承德",
       "initials": "承德",
       "role": "資深工程師",
+      "role_key": "senior-rd-a",
       "team": "臺灣主權 AI",
       "subtitle": "資深工程師 · Hyweb-TedHsu",
+      "system_type": "general",
       "tier": "C",
       "alert": "orange",
       "issues": 1,
@@ -1308,17 +1361,17 @@
       "kpis": [
         {
           "name": "AI 導入",
-          "score": 58,
-          "prev": 58,
+          "score": 60,
+          "prev": 60,
           "delta": 0,
-          "status": "未達標",
+          "status": "已完成",
           "trend": [
-            58,
-            58,
-            58,
-            58,
-            58,
-            58
+            60,
+            60,
+            60,
+            60,
+            60,
+            60
           ]
         },
         {
@@ -1338,32 +1391,32 @@
         },
         {
           "name": "品質",
-          "score": 58,
-          "prev": 58,
+          "score": 60,
+          "prev": 60,
           "delta": 0,
-          "status": "未達標",
+          "status": "已完成",
           "trend": [
-            58,
-            58,
-            58,
-            58,
-            58,
-            58
+            60,
+            60,
+            60,
+            60,
+            60,
+            60
           ]
         },
         {
           "name": "通用",
-          "score": 58,
-          "prev": 58,
+          "score": 60,
+          "prev": 60,
           "delta": 0,
-          "status": "未達標",
+          "status": "已完成",
           "trend": [
-            58,
-            58,
-            58,
-            58,
-            58,
-            58
+            60,
+            60,
+            60,
+            60,
+            60,
+            60
           ]
         }
       ],
@@ -1375,14 +1428,19 @@
           "status": "進行中",
           "url": "https://github.com/jooca-tw/project_corpus_ai/issues/407"
         }
-      ]
+      ],
+      "quarterly_review_url": null,
+      "rework_credit_count": 0,
+      "review_lag_count": 0
     },
     {
       "name": "江怡蓓",
       "initials": "怡蓓",
       "role": "專案經理",
+      "role_key": "pm",
       "team": "蓬萊國小智慧閱讀, 台北市立圖書館",
       "subtitle": "專案經理 · hyweb-RebeccaChiang",
+      "system_type": "general",
       "tier": "C",
       "alert": "ok",
       "issues": 0,
@@ -1520,7 +1578,10 @@
           ]
         }
       ],
-      "issue_list": []
+      "issue_list": [],
+      "quarterly_review_url": null,
+      "rework_credit_count": 0,
+      "review_lag_count": 0
     }
   ],
   "alerts": [
