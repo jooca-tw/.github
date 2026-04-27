@@ -72,6 +72,53 @@
         </div>
       </div>
 
+      <!-- v5.1 團隊 KPI（leading indicator，全員可見） -->
+      <div class="team-kpi-section" id="team-kpi-section">
+        <div class="team-kpi-header">
+          <h2 class="team-kpi-title">團隊 Leading Indicator</h2>
+          <div class="team-kpi-subtitle">v5.1 三軸趨勢 · 全員可見 · 鼓勵團隊改善（不做個人排名）</div>
+        </div>
+        <div class="team-kpi-grid">
+          <div class="team-kpi-card axis-ai">
+            <div class="team-kpi-axis-label">軸 1 · AI 導入</div>
+            <div class="team-kpi-main">
+              <span class="team-kpi-num" data-render="team_kpi.axis1_ai_adoption.ai_adoption_rate">—</span>
+              <span class="team-kpi-unit">%</span>
+            </div>
+            <div class="team-kpi-meta">
+              目標 ≥ <span data-render="team_kpi.axis1_ai_adoption.ai_adoption_target">70</span>%
+              · 流程貢獻者 <span data-render="team_kpi.axis1_ai_adoption.ai_contributor_count">—</span>
+              · 零行為 <span data-render="team_kpi.axis1_ai_adoption.ai_zero_count">—</span>
+            </div>
+          </div>
+          <div class="team-kpi-card axis-ontime">
+            <div class="team-kpi-axis-label">軸 2 · 如期交付</div>
+            <div class="team-kpi-main">
+              <span class="team-kpi-num" data-render="team_kpi.axis2_on_time.milestone_hit_rate">—</span>
+              <span class="team-kpi-unit">%</span>
+            </div>
+            <div class="team-kpi-meta">
+              Milestone 命中率
+              · miss <span data-render="team_kpi.axis2_on_time.milestone_miss_count">—</span> 件
+            </div>
+          </div>
+          <div class="team-kpi-card axis-quality">
+            <div class="team-kpi-axis-label">軸 3 · 品質</div>
+            <div class="team-kpi-main">
+              <span class="team-kpi-num" data-render="team_kpi.axis3_quality.rollback_count">—</span>
+              <span class="team-kpi-unit">rollback</span>
+            </div>
+            <div class="team-kpi-meta">
+              客戶端 bug <span data-render="team_kpi.axis3_quality.customer_bug_count">—</span>
+              · 隱瞞 bug <span data-render="team_kpi.axis3_quality.hidden_bug_count">—</span>
+            </div>
+          </div>
+        </div>
+        <div class="team-kpi-note">
+          <strong>📊 注意</strong>：這是團隊層 leading indicator，個人考核仍以紅燈為主。系統類型分組視覺化（避免維護組屎缺難看）正在開發中。
+        </div>
+      </div>
+
       <div class="toolbar">
         <div class="search">
           <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M10.68 11.74a6 6 0 0 1-7.922-8.982 6 6 0 0 1 8.982 7.922l3.04 3.04a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215zM11.5 7a4.499 4.499 0 1 0-8.997 0A4.499 4.499 0 0 0 11.5 7z"/></svg>

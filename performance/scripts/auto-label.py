@@ -59,6 +59,22 @@ def get_issue_details() -> dict:
     )
     milestone_info = result.stdout.strip() if result.returncode == 0 else "{}"
 
+    # 取得 issue 事件時間軸（找最近一次 closed 與 reopened，計算 quality-rollback 30 天視窗）
+    result = subprocess.run(
+        ["gh", "api", f"repos/{repo}/issues/{number}/events",
+         "--jq", '[.[] | select(.event=="closed" or .event=="reopened") | {event, actor: .actor.login, created_at}]'],
+        capture_output=True, text=True, timeout=30,
+    )
+    events = result.stdout.strip() if result.returncode == 0 else "[]"
+
+    # 取得最近 commenters（用於 customer-bug 判定 — 比對 customer-accounts.json）
+    result = subprocess.run(
+        ["gh", "api", f"repos/{repo}/issues/{number}/comments",
+         "--jq", '[.[] | .user.login] | unique | tostring'],
+        capture_output=True, text=True, timeout=30,
+    )
+    commenter_logins = result.stdout.strip() if result.returncode == 0 else "[]"
+
     return {
         "repo": repo,
         "number": number,
@@ -69,7 +85,23 @@ def get_issue_details() -> dict:
         "comments": comments[:3000],
         "pr_urls": pr_urls,
         "milestone_info": milestone_info,
+        "events": events,
+        "commenter_logins": commenter_logins,
+        "event_type": os.environ.get("ISSUE_EVENT", "closed"),  # closed | reopened
     }
+
+
+def load_customer_accounts() -> list[str]:
+    """讀客戶白名單"""
+    p = Path("performance/customer-accounts.json")
+    if not p.exists():
+        return []
+    try:
+        with open(p) as f:
+            data = json.load(f)
+        return data.get("customers", [])
+    except Exception:
+        return []
 
 
 def load_perf_labels() -> list[dict]:
@@ -119,6 +151,10 @@ def build_prompt(issue: dict, labels: list[dict], employee_roles: dict) -> str:
 - **已有標籤**: {issue['existing_labels']}
 - **Milestone**: {issue['milestone_info']}
 - **關聯 PR**: {issue['pr_urls']}
+- **事件類型**: {issue.get('event_type', 'closed')}（closed=結案；reopened=重啟）
+- **時間軸事件**: {issue.get('events', '[]')}
+- **留言者**: {issue.get('commenter_logins', '[]')}
+- **客戶帳號白名單**: {issue.get('customer_accounts_str', '[]')}
 
 ### Issue 內容
 {issue['body'][:2000]}
@@ -273,6 +309,11 @@ def main():
         role = load_employee_role(a)
         employee_roles[a] = role
     print(f"Assignees: {employee_roles}")
+
+    # 載入客戶帳號白名單（用於 customer-bug 判定）
+    customer_accounts = load_customer_accounts()
+    issue["customer_accounts_str"] = json.dumps(customer_accounts, ensure_ascii=False)
+    print(f"Customer accounts: {customer_accounts}")
 
     # 如果已有 perf label 且不是 tier tag，跳過（避免重複標記）
     existing_perf = [

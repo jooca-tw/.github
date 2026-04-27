@@ -23,23 +23,29 @@ PERF_LABELS_PATH = Path("performance/perf-labels.json")
 
 IN_CI = os.environ.get("CI") == "true" or EMPLOYEES_DIR.exists()
 
-# 考核維度對應
-DIMENSIONS = {
-    "O1": "程式碼品質",
-    "O2": "時程管理",
-    "O3": "團隊協作",
-    "O4": "技術成長",
-    "O5": "客戶滿意度",
+# v5.1 三軸架構（取代 v3 的 O1-O5 五維度）
+AXES = {
+    "axis1-ai-adoption": "AI 導入",
+    "axis2-on-time": "如期交付",
+    "axis3-quality": "品質",
+    "general": "通用",
 }
 
-CATEGORIES = ["程式碼品質", "時程管理", "團隊協作", "技術成長", "問題解決", "客戶滿意度"]
+# v3 兼容：dimension → axis 對應（avoid breaking existing data）
+DIMENSION_TO_AXIS = {
+    "O1": "axis3-quality",      # 程式碼品質 → 品質
+    "O2": "axis2-on-time",      # 時程管理 → 如期
+    "O3": "axis2-on-time",      # 團隊協作 → 如期（review-lag 也歸這軸）
+    "O4": "general",            # 技術成長 → 通用
+    "O5": "axis1-ai-adoption",  # 客戶滿意度 → 改 AI 導入（v3 ai-app 在 O5）
+}
+
+CATEGORIES = ["AI 導入", "如期交付", "品質", "通用"]
 CATEGORY_COLORS = {
-    "程式碼品質": "#f85149",
-    "時程管理": "#2f81f7",
-    "團隊協作": "#3fb950",
-    "技術成長": "#a371f7",
-    "問題解決": "#db6d28",
-    "客戶滿意度": "#e3b341",
+    "AI 導入": "#a371f7",
+    "如期交付": "#2f81f7",
+    "品質": "#f85149",
+    "通用": "#8b949e",
 }
 
 ROLE_LABELS = {
@@ -107,10 +113,19 @@ def load_perf_labels() -> dict:
 
 def fetch_perf_issues() -> list[dict]:
     perf_label_names = [
-        "perf:hidden-bug", "perf:milestone-missed", "perf:surprise-delay",
-        "perf:untested-delivery", "perf:customer-late-reply", "perf:scope-creep",
-        "perf:tech-research", "perf:ai-app", "perf:crisis-handling",
+        # v5.1 軸2 如期
+        "perf:milestone-missed", "perf:surprise-delay",
+        "perf:customer-late-reply", "perf:scope-creep",
+        "perf:review-lag",
+        # v5.1 軸3 品質
+        "perf:hidden-bug", "perf:quality-rollback", "perf:customer-bug",
+        # v5.1 軸1 AI 導入
+        "perf:ai-contribution", "perf:ai-zero",
+        # 通用加分（保留）
+        "perf:tech-research", "perf:crisis-handling",
         "perf:team-backup", "perf:tier-jump",
+        # v3 相容（暫保留以支援過渡期歷史資料）
+        "perf:untested-delivery", "perf:ai-app", "perf:ai-paired",
     ]
     seen = set()
     all_issues = []
@@ -132,13 +147,29 @@ def fetch_perf_issues() -> list[dict]:
     return all_issues
 
 
-def compute_score(label_def: dict) -> int:
+def compute_score(label_def: dict, role: str = "rd") -> int:
+    """計算 label 對指定 role 的得分。
+    支援 v5.1 milestone-missed 拆分（score_pm / score_rd）。"""
+    # milestone-missed 等拆分型 label
+    if role == "pm" and "score_pm" in label_def:
+        return label_def["score_pm"]
+    if role == "rd" and "score_rd" in label_def:
+        return label_def["score_rd"]
     if "score" in label_def:
         return label_def["score"]
     if "score_range" in label_def:
         sr = label_def["score_range"]
         return (sr[0] + sr[1]) // 2
     return 0
+
+
+def get_label_axis(label_def: dict) -> str:
+    """取得 label 的 axis（v5.1）。回退到舊 dimension 對應"""
+    axis = label_def.get("axis")
+    if axis:
+        return axis
+    dim = label_def.get("dimension", "")
+    return DIMENSION_TO_AXIS.get(dim, "general")
 
 
 def build_data(employees: dict, perf_labels: dict, issues: list[dict]) -> dict:
@@ -161,12 +192,14 @@ def build_data(employees: dict, perf_labels: dict, issues: list[dict]) -> dict:
             "role_key": role_key,
             "manager": manager,
             "projects": raw.get("projects", []),
+            "system_type": raw.get("system_type", "general"),  # v5.1: legacy / new-feature / internal-tooling / general
             "total_score": 60,  # baseline
             "deductions": 0,
             "bonuses": 0,
-            "dim_scores": {d: 0 for d in DIMENSIONS},
+            "axis_scores": {a: 0 for a in AXES},  # v5.1 三軸
             "issue_list": [],
             "labels_hit": {},
+            "review_lag_count": 0,  # 月度 review-lag 件數（用於上限 -5 計算）
         }
 
     # Process issues
@@ -177,12 +210,12 @@ def build_data(employees: dict, perf_labels: dict, issues: list[dict]) -> dict:
         repo = issue.get("repository", {})
         repo_name = repo.get("name", "") if isinstance(repo, dict) else str(repo)
 
-        # Map labels to categories
-        category = "問題解決"  # default
+        # Map labels to categories（v5.1 三軸）
+        category = "通用"  # default
         for lb in perf_issue_labels:
-            dim = perf_labels.get(lb, {}).get("dimension", "")
-            if dim in DIMENSIONS:
-                category = DIMENSIONS[dim]
+            ax = get_label_axis(perf_labels.get(lb, {}))
+            if ax in AXES:
+                category = AXES[ax]
                 break
 
         status = "已完成" if issue.get("state") == "CLOSED" else "進行中"
@@ -203,17 +236,27 @@ def build_data(employees: dict, perf_labels: dict, issues: list[dict]) -> dict:
 
             for lb_name in perf_issue_labels:
                 label_def = perf_labels.get(lb_name, {})
-                score = compute_score(label_def)
+                role_key = emp.get("role_key", "rd")
+                # 抽出 role：pm 角色獨立處理 milestone-missed
+                role_for_score = "pm" if "pm" in role_key else "rd"
+                score = compute_score(label_def, role=role_for_score)
                 label_type = label_def.get("type", "")
-                dimension = label_def.get("dimension", "")
+                axis = get_label_axis(label_def)
+
+                # review-lag 月度上限 -5
+                if lb_name == "perf:review-lag":
+                    emp["review_lag_count"] += 1
+                    if emp["review_lag_count"] > 5:
+                        # 已達月度上限 -5，後續不再扣
+                        score = 0
 
                 emp["total_score"] += score
                 if label_type == "deduction":
                     emp["deductions"] += score
                 elif label_type == "bonus":
                     emp["bonuses"] += score
-                if dimension in emp["dim_scores"]:
-                    emp["dim_scores"][dimension] += score
+                if axis in emp["axis_scores"]:
+                    emp["axis_scores"][axis] += score
                 emp["labels_hit"][lb_name] = emp["labels_hit"].get(lb_name, 0) + 1
 
     # Build members array (design schema)
@@ -232,13 +275,13 @@ def build_data(employees: dict, perf_labels: dict, issues: list[dict]) -> dict:
         trend_categories = [{"name": c, "color": CATEGORY_COLORS[c]} for c in CATEGORIES]
         trend_series = {c: [score] * 6 for c in CATEGORIES}
 
-        # Focus tags: categories where deductions happened
+        # Focus tags: categories where deductions happened (v5.1 三軸)
         focus_tags = []
         for lb_name, cnt in emp["labels_hit"].items():
             ld = perf_labels.get(lb_name, {})
             if ld.get("type") == "deduction":
-                dim = ld.get("dimension", "")
-                cat = DIMENSIONS.get(dim, "")
+                ax = get_label_axis(ld)
+                cat = AXES.get(ax, "")
                 if cat and cat not in focus_tags:
                     focus_tags.append(cat)
 
@@ -334,11 +377,77 @@ def build_data(employees: dict, perf_labels: dict, issues: list[dict]) -> dict:
         "alerts_delta": "—",
     }
 
+    # v5.1 團隊 KPI（三軸 leading indicator，全員可見）
+    team_kpi = build_team_kpi(emp_data, issues, perf_labels)
+
     return {
         "stats": stats,
+        "team_kpi": team_kpi,
         "members": members,
         "alerts": alerts,
         "alert_summary": alert_counts,
+    }
+
+
+def build_team_kpi(emp_data: dict, issues: list[dict], perf_labels: dict) -> dict:
+    """v5.1 團隊層 leading indicator（dashboard 全員可見，按系統類型分組）"""
+    # 篩選非主管
+    members_only = {k: v for k, v in emp_data.items() if v.get("manager")}
+
+    # 1. AI 導入率（個人保底達標 — 月內有 perf:ai-contribution 或無 perf:ai-zero）
+    total = len(members_only) or 1
+    ai_zero_count = sum(1 for v in members_only.values() if "perf:ai-zero" in v["labels_hit"])
+    ai_active_count = total - ai_zero_count
+    ai_adoption_rate = round(ai_active_count / total * 100)
+
+    # 2. AI 流程貢獻者數
+    ai_contrib_count = sum(1 for v in members_only.values() if "perf:ai-contribution" in v["labels_hit"])
+
+    # 3. milestone 命中率（粗估：closed milestone 中無 perf:milestone-missed 比例）
+    miss_count = sum(1 for i in issues
+                     if any(lb.get("name") == "perf:milestone-missed" for lb in i.get("labels", [])))
+    closed_milestone_count = sum(1 for v in members_only.values()
+                                  for i in v.get("issue_list", [])
+                                  if i.get("status") == "已完成")
+    on_time_rate = round((1 - miss_count / max(closed_milestone_count, 1)) * 100) if closed_milestone_count else None
+
+    # 4. 品質紅燈件數
+    rollback_count = sum(v["labels_hit"].get("perf:quality-rollback", 0) for v in members_only.values())
+    customer_bug_count = sum(v["labels_hit"].get("perf:customer-bug", 0) for v in members_only.values())
+    hidden_bug_count = sum(v["labels_hit"].get("perf:hidden-bug", 0) for v in members_only.values())
+
+    # 系統類型分組（避免劣幣驅良幣）
+    by_system = {}
+    for v in members_only.values():
+        st = v.get("system_type", "general")
+        by_system.setdefault(st, {"count": 0, "ai_zero": 0, "rollback": 0, "customer_bug": 0})
+        by_system[st]["count"] += 1
+        if "perf:ai-zero" in v["labels_hit"]:
+            by_system[st]["ai_zero"] += 1
+        by_system[st]["rollback"] += v["labels_hit"].get("perf:quality-rollback", 0)
+        by_system[st]["customer_bug"] += v["labels_hit"].get("perf:customer-bug", 0)
+
+    return {
+        "axis1_ai_adoption": {
+            "title": "軸 1：AI 導入",
+            "ai_adoption_rate": ai_adoption_rate,  # %
+            "ai_adoption_target": 70,
+            "ai_zero_count": ai_zero_count,
+            "ai_contributor_count": ai_contrib_count,
+        },
+        "axis2_on_time": {
+            "title": "軸 2：如期交付",
+            "milestone_hit_rate": on_time_rate,  # %（None = 無資料）
+            "milestone_miss_count": miss_count,
+        },
+        "axis3_quality": {
+            "title": "軸 3：品質",
+            "rollback_count": rollback_count,
+            "customer_bug_count": customer_bug_count,
+            "hidden_bug_count": hidden_bug_count,
+        },
+        "by_system_type": by_system,
+        "note": "v5.1 leading indicator。個人考核只做紅燈，這份趨勢給全員看（鼓勵團隊層改善，避免個別比較）",
     }
 
 

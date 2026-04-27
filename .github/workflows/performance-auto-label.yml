@@ -39,9 +39,10 @@ jobs:
           ISSUE_REPO: ${{ github.repository }}
           ISSUE_ASSIGNEES: ${{ join(github.event.issue.assignees.*.login, ',') }}
           ISSUE_LABELS: ${{ join(github.event.issue.labels.*.name, ',') }}
+          ISSUE_EVENT: closed
         run: python performance/scripts/auto-label.py
 
-      - name: Remove perf labels on reopen
+      - name: Remove non-quality perf labels on reopen
         if: github.event.action == 'reopened'
         env:
           GH_TOKEN: ${{ secrets.PERF_TOKEN }}
@@ -49,11 +50,25 @@ jobs:
           ISSUE_REPO: ${{ github.repository }}
           ISSUE_LABELS: ${{ join(github.event.issue.labels.*.name, ',') }}
         run: |
+          # 移除非品質類 perf: label（quality-rollback / customer-bug 由 auto-label.py 重新判斷時加）
           IFS=',' read -ra LABELS <<< "$ISSUE_LABELS"
           for label in "${LABELS[@]}"; do
-            if [[ "$label" == perf:* && "$label" != perf:tier-* ]]; then
+            if [[ "$label" == perf:* && "$label" != perf:tier-* && "$label" != perf:scope-change && "$label" != perf:intentional-rollback && "$label" != perf:not-a-bug && "$label" != perf:spec-mismatch && "$label" != perf:customer-reported ]]; then
               echo "Removing $label"
               gh issue edit "$ISSUE_NUMBER" --repo "$ISSUE_REPO" --remove-label "$label" || true
             fi
           done
-          echo "✅ Perf labels removed (issue reopened)"
+          echo "✅ 非品質類 perf labels 已移除（issue reopened）"
+
+      - name: Auto label on reopen (quality-rollback / customer-bug)
+        if: github.event.action == 'reopened'
+        env:
+          GH_TOKEN: ${{ secrets.PERF_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          ISSUE_REPO: ${{ github.repository }}
+          ISSUE_ASSIGNEES: ${{ join(github.event.issue.assignees.*.login, ',') }}
+          ISSUE_LABELS: ${{ join(github.event.issue.labels.*.name, ',') }}
+          ISSUE_EVENT: reopened
+        run: python performance/scripts/auto-label.py

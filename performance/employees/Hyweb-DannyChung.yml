@@ -11,4 +11,5 @@ projects:
   - 全國加油站
   - BBL
   - 蓬萊國小智慧閱讀
+system_type: new-feature  # v5.1: legacy / new-feature / internal-tooling / general（dashboard 分組用，避免劣幣驅良幣）
 notes: 'RD 組組員（Junior）'

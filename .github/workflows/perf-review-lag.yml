@@ -1,0 +1,112 @@
+name: Performance Review Lag Detection
+
+# v5.1 軸 2 如期：每天 09:00 (Asia/Taipei = UTC 01:00) 掃所有 org repo 的 open PR
+# 找出被 request_review 後 ≥ 48h 仍未 approve / request_changes 的 reviewer，
+# 自動標 perf:review-lag（月度上限由 generate-dashboard-data.py 計算）
+
+on:
+  schedule:
+    - cron: '0 1 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  detect:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Detect review-lag PRs across org
+        env:
+          GH_TOKEN: ${{ secrets.PERF_TOKEN }}
+        run: |
+          set -e
+          ORG=jooca-tw
+          THRESHOLD_HOURS=48
+          NOW=$(date -u +%s)
+          CUTOFF=$((NOW - THRESHOLD_HOURS * 3600))
+
+          echo "Cutoff timestamp: $(date -u -r $CUTOFF '+%Y-%m-%dT%H:%M:%SZ')"
+
+          # 列出 org 所有 repo（排除 .github）
+          REPOS=$(gh repo list "$ORG" --limit 200 --json name --jq '.[].name' | grep -v '^\.github$' || true)
+
+          for repo in $REPOS; do
+            echo "::group::$repo"
+
+            # 列出該 repo 的 open PR
+            PRS=$(gh pr list --repo "$ORG/$repo" --state open --limit 100 \
+                  --json number,reviewRequests,reviews,createdAt --jq '.[]' 2>/dev/null || echo '')
+
+            if [ -z "$PRS" ]; then
+              echo "  no open PRs"
+              echo "::endgroup::"
+              continue
+            fi
+
+            echo "$PRS" | jq -c '.' | while read -r pr; do
+              pr_num=$(echo "$pr" | jq -r '.number')
+              created=$(echo "$pr" | jq -r '.createdAt')
+              created_ts=$(date -u -d "$created" +%s 2>/dev/null || gdate -u -d "$created" +%s 2>/dev/null || echo "0")
+
+              # 該 PR 的 review requests（待審查的 reviewer 清單）
+              reviewers=$(echo "$pr" | jq -r '.reviewRequests[]?.login // empty')
+
+              # PR 已 approve / request changes 的 reviewer 清單
+              reviewed=$(echo "$pr" | jq -r '.reviews[]?.author.login // empty' | sort -u)
+
+              if [ "$created_ts" -lt "$CUTOFF" ] && [ -n "$reviewers" ]; then
+                # 標 perf:review-lag 給未審的 reviewer（每個 reviewer 在他自己的「績效 issue」追蹤）
+                for r in $reviewers; do
+                  echo "  PR #$pr_num lag → reviewer: $r"
+                  # 這裡為避免直接打擾 PR 流程，僅在 .github repo 開一個 perf log issue 紀錄
+                  # 由 monthly-review cron 統一彙整
+                  echo "{\"repo\":\"$repo\",\"pr\":$pr_num,\"reviewer\":\"$r\",\"created\":\"$created\"}" >> review-lag.jsonl
+                done
+              fi
+            done
+
+            echo "::endgroup::"
+          done
+
+          if [ -f review-lag.jsonl ]; then
+            echo "===== Review Lag Detected ====="
+            cat review-lag.jsonl
+            COUNT=$(wc -l < review-lag.jsonl)
+            echo "Total: $COUNT lag events"
+
+            # 寫入 perf log issue（每月一張，供 monthly-review 彙整）
+            MONTH=$(date -u +%Y-%m)
+            LOG_TITLE="[perf-log] review-lag $MONTH"
+
+            # 找今月的 log issue（jooca-tw/.github 內）
+            EXIST=$(gh issue list --repo jooca-tw/.github --state open \
+                    --search "in:title \"$LOG_TITLE\"" --json number --jq '.[0].number // empty')
+
+            BODY=$(cat review-lag.jsonl)
+
+            if [ -z "$EXIST" ]; then
+              gh issue create --repo jooca-tw/.github \
+                --title "$LOG_TITLE" \
+                --body "本月 review-lag 偵測紀錄（每天累加）：
+
+\`\`\`jsonl
+$BODY
+\`\`\`
+
+由 perf-review-lag cron 自動產生。月底由 monthly-review 彙整給主管確認。" \
+                --label "perf:log" || echo "Failed to create issue"
+            else
+              gh issue comment "$EXIST" --repo jooca-tw/.github \
+                --body "$(date -u +%Y-%m-%dT%H:%MZ) 新增：
+
+\`\`\`jsonl
+$BODY
+\`\`\`" || echo "Failed to comment"
+            fi
+          else
+            echo "No review-lag events today ✅"
+          fi

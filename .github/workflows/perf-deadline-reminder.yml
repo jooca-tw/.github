@@ -1,0 +1,44 @@
+name: Performance Deadline Reminder
+
+# v5.1：在 quality-rollback 申訴期 (2 個工作天) 前 4h 推 Slack 提醒主管
+# 對應提案「Slack Bot 預警 — 事後扣分 → 事前催促」
+
+on:
+  schedule:
+    - cron: '0 */4 * * *'  # 每 4h 跑（粗略接近申訴期 last 4h）
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  remind:
+    runs-on: ubuntu-latest
+    if: ${{ vars.SLACK_WEBHOOK_PERF != '' }}
+    steps:
+      - name: Find pending rollback attribution windows
+        env:
+          GH_TOKEN: ${{ secrets.PERF_TOKEN }}
+          SLACK_WEBHOOK: ${{ vars.SLACK_WEBHOOK_PERF }}
+        run: |
+          set -e
+          # 找最近 3 天 reopened 且帶 perf:quality-rollback 的 issue（粗略覆蓋 2 工作日視窗）
+          CUTOFF=$(date -u -d '3 days ago' +%Y-%m-%dT%H:%M:%SZ 2>/dev/null || gdate -u -d '3 days ago' +%Y-%m-%dT%H:%M:%SZ)
+
+          PENDING=$(gh search issues --owner jooca-tw \
+                      --label "perf:quality-rollback" \
+                      --state open \
+                      --updated ">$CUTOFF" \
+                      --json url,title,repository,number 2>/dev/null || echo '[]')
+
+          COUNT=$(echo "$PENDING" | jq 'length')
+          if [ "$COUNT" -gt 0 ]; then
+            MSG=$(echo "$PENDING" | jq -r '.[] | "• #\(.number) \(.title) — \(.url)"' | head -10)
+
+            curl -X POST -H 'Content-Type: application/json' \
+              --data "{
+                \"text\": \"⚠️ 績效 quality-rollback 申訴期將屆 (剩 < 4h)\n\n${MSG//\"/\\\"}\n\n請主管確認是否需 \`rollback-attribution\` 轉移歸責\"
+              }" "$SLACK_WEBHOOK" || echo "Slack post failed"
+          else
+            echo "No pending rollback attribution windows"
+          fi
