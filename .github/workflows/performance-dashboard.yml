@@ -6,6 +6,14 @@ on:
   workflow_dispatch:
   issues:
     types: [labeled, unlabeled, closed, reopened]
+  push:
+    branches: [main]
+    paths:
+      - 'performance/dashboard/**'
+      - 'performance/scripts/**'
+      - 'performance/employees/**'
+      - 'performance/perf-labels.json'
+      - '.github/workflows/performance-dashboard.yml'
 
 permissions:
   contents: write
