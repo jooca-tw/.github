@@ -1,7 +1,7 @@
 {
   "stats": {
     "department_name": "O 部門",
-    "period_label": "2026 年 4 月",
+    "period_label": "2026 年 5 月",
     "member_count": 10,
     "avg_score": 59.6,
     "avg_score_delta": "—",
@@ -1592,7 +1592,7 @@
       "level": "orange",
       "reason": "扣分事件",
       "detail": "score 58",
-      "date": "4/30"
+      "date": "5/1"
     },
     {
       "name": "許承德",
@@ -1601,7 +1601,7 @@
       "level": "orange",
       "reason": "扣分事件",
       "detail": "score 58",
-      "date": "4/30"
+      "date": "5/1"
     }
   ],
   "alert_summary": {
